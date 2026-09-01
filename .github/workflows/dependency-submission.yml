@@ -1,0 +1,51 @@
+# =============================================================================
+# 依赖提交工作流: 向 GitHub 提交项目依赖快照, 供 Dependency Review 使用
+# =============================================================================
+name: Dependency Submission
+
+# 触发条件: 向 main 分支 push 或发起 PR 时执行
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# 权限设置: 需要 id-token 和写入权限以上传依赖快照
+permissions:
+  id-token: write
+  contents: write
+
+# 作业定义: 扫描依赖并提交快照
+jobs:
+  submit-nuget:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 检出代码
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      # 2. 安装 .NET 10 SDK
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: |
+            **/*.csproj
+            **/*.props
+            **/*.slnx
+
+      # 3. 安装 .NET Android 工作负载
+      - name: Install Android workload
+        run: dotnet workload install android
+
+      # 4. 还原 NuGet 依赖
+      - name: Restore NuGet packages
+        run: dotnet restore
+
+      # 5. 扫描 NuGet 依赖并提交快照到 GitHub 依赖图
+      - name: Submit dependency snapshot
+        uses: advanced-security/component-detection-dependency-submission-action@v0.1.4
+        with:
+          detectorsCategories: NuGet

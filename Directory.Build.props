@@ -1,0 +1,56 @@
+<Project>
+
+  <!-- 所有项目共用的属性 -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <Nullable>enable</Nullable>
+    <NoWarn>$(NoWarn);NU1507</NoWarn>
+    <Authors>xiting910</Authors>
+    <Product>ClassSchedule</Product>
+    <Copyright>Copyright © 2026 $(Authors). All rights reserved.</Copyright>
+  </PropertyGroup>
+
+  <!-- 版本号和应用程序版本号 -->
+  <PropertyGroup>
+    <Version>1.0.0</Version>
+    <ApplicationVersion>1</ApplicationVersion>
+  </PropertyGroup>
+
+  <!-- 根据项目名是否以 .Tests 结尾判断是否为测试项目 -->
+  <PropertyGroup>
+    <IsTestProject Condition="$(MSBuildProjectName.EndsWith('.Tests'))">true</IsTestProject>
+  </PropertyGroup>
+
+  <!-- 非测试项目生成 XML 文档 -->
+  <PropertyGroup Condition="'$(IsTestProject)' != 'true'">
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <!-- 非测试项目设置 InternalsVisibleTo, 允许测试项目和 Moq 动态代理程序集访问内部类型 -->
+  <ItemGroup Condition="'$(IsTestProject)' != 'true'">
+    <InternalsVisibleTo Include="$(MSBuildProjectName).Tests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <!-- 仅测试项目: 设置输出类型为 Exe, 启用不可打包, 启用隐式 using, 忽略特定警告 -->
+  <PropertyGroup Condition="'$(IsTestProject)' == 'true'">
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <NoWarn>$(NoWarn);CA1707;MTP0001</NoWarn>
+  </PropertyGroup>
+
+  <!-- 仅测试项目: 引用测试相关的 NuGet 包 -->
+  <ItemGroup Condition="'$(IsTestProject)' == 'true'">
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Moq" />
+    <PackageReference Include="xunit.v3" />
+  </ItemGroup>
+
+  <!-- 仅测试项目: 引用 Xunit -->
+  <ItemGroup Condition="'$(IsTestProject)' == 'true'">
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,25 @@
+<Solution>
+  <Folder Name="/others/">
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="CHANGELOG.md" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/srcs/">
+    <Project Path="srcs/ClassSchedule.Domain/ClassSchedule.Domain.csproj" Id="e95adfb9-209f-4af2-b007-441d7c4f0ca6" />
+    <Project Path="srcs/ClassSchedule.Infrastructure/ClassSchedule.Infrastructure.csproj" Id="ed1ede24-2432-4b1d-9e2a-f6289cb290db" />
+    <Project Path="srcs/ClassSchedule.UI.Android/ClassSchedule.UI.Android.csproj" Id="bb0e5c67-efb8-4d32-a68e-0f3417f96363" />
+    <Project Path="srcs/ClassSchedule.UI.Desktop/ClassSchedule.UI.Desktop.csproj" Id="d871c01c-6adc-4f5b-9212-a3097eca460f" />
+    <Project Path="srcs/ClassSchedule.UI.Shared/ClassSchedule.UI.Shared.csproj" Id="473f47f7-89a7-4e73-8038-b084aa22b6c5" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ClassSchedule.Domain.Tests/ClassSchedule.Domain.Tests.csproj" Id="6f96def9-2eff-4ee8-b1b4-def997d98cdc" />
+    <Project Path="tests/ClassSchedule.Infrastructure.Tests/ClassSchedule.Infrastructure.Tests.csproj" Id="9bb2ba74-5d23-49b8-b501-e3fd45965817" />
+    <Project Path="tests/ClassSchedule.UI.Shared.Tests/ClassSchedule.UI.Shared.Tests.csproj" Id="fcf328a2-9312-4d02-aea5-da2647e9bce3" />
+  </Folder>
+</Solution>

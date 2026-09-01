@@ -1,0 +1,20 @@
+# IDE
+.vs/
+*.user
+
+# 构建产物
+bin/
+obj/
+
+# 发布产物
+publish/
+
+# 测试产物
+TestResults/
+!TestResults/*.trx
+
+# 数据库
+*.db*
+
+# 密钥
+*.keystore

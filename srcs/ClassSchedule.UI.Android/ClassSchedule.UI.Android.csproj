@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>$(TargetFramework)-android</TargetFramework>
+    <SupportedOSPlatformVersion>30</SupportedOSPlatformVersion>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <AndroidSigningKeyAlias>$(Product.ToLowerInvariant())</AndroidSigningKeyAlias>
+    <AndroidSigningKeyStore>$(MSBuildProjectDirectory)/android-release.keystore</AndroidSigningKeyStore>
+    <ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
+    <ApplicationId>com.$(Authors).$(Product.ToLowerInvariant())</ApplicationId>
+    <ApplicationIdTitle>$(Product)</ApplicationIdTitle>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="Exists('$(AndroidSigningKeyStore)')">
+    <AndroidKeyStore>true</AndroidKeyStore>
+    <AndroidSigningKeyPass>cs-release-2026</AndroidSigningKeyPass>
+    <AndroidSigningStorePass>cs-release-2026</AndroidSigningStorePass>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ClassSchedule.UI.Shared\ClassSchedule.UI.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Android" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Xamarin.AndroidX.Core.SplashScreen" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+
+</Project>

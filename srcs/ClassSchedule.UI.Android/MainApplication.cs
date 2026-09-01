@@ -1,0 +1,50 @@
+﻿using Android.App;
+using Android.Runtime;
+using Avalonia;
+using Avalonia.Android;
+using ClassSchedule.UI.Shared;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+
+namespace ClassSchedule.UI.Android;
+
+/// <summary>
+/// 主应用程序类
+/// </summary>
+[Application]
+public class MainApplication : AvaloniaAndroidApplication<App>
+{
+    /// <summary>
+    /// 未知异常的类型
+    /// </summary>
+    /// <param name="message">异常消息</param>
+    private sealed class UnknownException(string? message) : Exception(message);
+
+    /// <summary>
+    /// 初始化一个新的 <see cref="MainApplication"/> 实例
+    /// </summary>
+    /// <param name="javaReference">Java 参考</param>
+    /// <param name="transfer">JNI 处理所有权</param>
+    protected MainApplication(nint javaReference, JniHandleOwnership transfer)
+        : base(javaReference, transfer) { }
+
+    /// <summary>
+    /// 自定义应用程序构建器
+    /// </summary>
+    /// <param name="builder">应用程序构建器</param>
+    /// <returns>自定义后的应用程序构建器</returns>
+    protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
+    {
+        AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+        {
+            // var ex = e.ExceptionObject as Exception ?? new UnknownException(e.ExceptionObject.ToString());
+            // UnhandledExceptionHelper.HandleException(e.IsTerminating, ex);
+        };
+
+        App.Services = new ServiceCollection()
+            .AddUIShared()
+            .BuildServiceProvider();
+
+        return base.CustomizeAppBuilder(builder).WithInterFont().LogToTrace();
+    }
+}
