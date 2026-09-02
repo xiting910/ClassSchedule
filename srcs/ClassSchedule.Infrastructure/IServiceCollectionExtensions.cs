@@ -1,10 +1,10 @@
-using ClassSchedule.UI.Shared.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
-namespace ClassSchedule.UI.Shared;
+namespace ClassSchedule.Infrastructure;
 
 /// <summary>
-/// UI 共享层服务的 DI 注册扩展方法
+/// <see cref="Infrastructure"/> 层服务的 DI 注册扩展方法
 /// </summary>
 public static class IServiceCollectionExtensions
 {
@@ -15,14 +15,14 @@ public static class IServiceCollectionExtensions
     extension(IServiceCollection services)
     {
         /// <summary>
-        /// 注册 UI 共享层的所有服务
+        /// 注册 <see cref="Infrastructure"/> 层的所有服务
         /// </summary>
         /// <returns>服务集合</returns>
-        public IServiceCollection AddUIShared()
+        public IServiceCollection AddInfrastructure()
         {
             return services
-                .AddSingleton<UIOptions>()
-                .AddSingleton<ToastViewModel>();
+                .AddSingleton(TimeProvider.System)
+                .AddSingleton<FileLoggerOptions>();
         }
     }
 }

@@ -1,5 +1,8 @@
 using Avalonia;
+using ClassSchedule.Domain;
+using ClassSchedule.Infrastructure;
 using ClassSchedule.UI.Shared;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -11,7 +14,7 @@ namespace ClassSchedule.UI.Desktop;
 file static class Program
 {
     /// <summary>
-    /// 未知异常的类型
+    /// 未知异常类
     /// </summary>
     /// <param name="message">异常消息</param>
     private sealed class UnknownException(string? message) : Exception(message);
@@ -26,11 +29,18 @@ file static class Program
     {
         AppDomain.CurrentDomain.UnhandledException += (_, e) =>
         {
-            // var ex = e.ExceptionObject as Exception ?? new UnknownException(e.ExceptionObject.ToString());
-            // UnhandledExceptionHelper.HandleException(e.IsTerminating, ex);
+            var ex = e.ExceptionObject as Exception ?? new UnknownException(e.ExceptionObject.ToString());
+            UnhandledExceptionHelper.HandleException(e.IsTerminating, ex);
         };
 
+        var configurationBuilder = new ConfigurationBuilder();
+        var config = configurationBuilder.AddJsonFilesFromSettings().Build();
+
         using var service = new ServiceCollection()
+            .AddSingleton<IConfiguration>(config)
+            .AddLogging(builder => builder.AddFileLogger())
+            .AddDomain()
+            .AddInfrastructure()
             .AddUIShared()
             .BuildServiceProvider();
 

@@ -1,10 +1,9 @@
-using ClassSchedule.UI.Shared.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ClassSchedule.UI.Shared;
+namespace ClassSchedule.Domain;
 
 /// <summary>
-/// UI 共享层服务的 DI 注册扩展方法
+/// <see cref="Domain"/> 层服务的 DI 注册扩展方法
 /// </summary>
 public static class IServiceCollectionExtensions
 {
@@ -15,14 +14,12 @@ public static class IServiceCollectionExtensions
     extension(IServiceCollection services)
     {
         /// <summary>
-        /// 注册 UI 共享层的所有服务
+        /// 注册 <see cref="Domain"/> 层的所有服务
         /// </summary>
         /// <returns>服务集合</returns>
-        public IServiceCollection AddUIShared()
+        public IServiceCollection AddDomain()
         {
-            return services
-                .AddSingleton<UIOptions>()
-                .AddSingleton<ToastViewModel>();
+            return services;
         }
     }
 }

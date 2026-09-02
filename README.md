@@ -73,9 +73,17 @@ ClassSchedule/
 │   └── PULL_REQUEST_TEMPLATE.md                      #  PR 描述模板
 ├── srcs/                                             # 源码目录
 │   ├── ClassSchedule.Domain/                         #  领域层
-│   │   └── ClassSchedule.Domain.csproj               #   项目文件
+│   │   ├── ClassSchedule.Domain.csproj               #   项目文件
+│   │   └── IServiceCollectionExtensions.cs           #   DI 注册扩展
 │   ├── ClassSchedule.Infrastructure/                 #  基础设施层
-│   │   └── ClassSchedule.Infrastructure.csproj       #   项目文件 (引用 Domain)
+│   │   ├── ClassSchedule.Infrastructure.csproj       #   项目文件 (引用 Domain)
+│   │   ├── FileLoggerOptions.cs                      #   文件日志选项
+│   │   ├── FileSystem.cs                             #   文件系统路径与安全写入
+│   │   ├── ILoggingBuilderExtensions.cs              #   文件日志注册扩展
+│   │   ├── IServiceCollectionExtensions.cs           #   DI 注册扩展
+│   │   ├── UnhandledExceptionHelper.cs               #   未处理异常日志
+│   │   └── Services/                                 #   服务实现
+│   │       └── FileLoggerProvider.cs                 #    文件日志提供器
 │   ├── ClassSchedule.UI.Android/                     #  安卓端
 │   │   ├── Properties/                               #   Android 属性
 │   │   │   └── AndroidManifest.xml                   #    Android 清单
@@ -107,8 +115,15 @@ ClassSchedule/
 │       ├── App.axaml                                 #   应用定义
 │       ├── App.axaml.cs                              #   应用类
 │       ├── ClassSchedule.UI.Shared.csproj            #   项目文件
+│       ├── Constants.cs                              #   UI 常量
 │       ├── IServiceCollectionExtensions.cs           #   DI 注册扩展
-│       └── ViewLocator.cs                            #   ViewModel → View 定位器
+│       ├── UIOptions.cs                              #   UI 选项 (主题/Toast)
+│       ├── ViewLocator.cs                            #   ViewModel → View 定位器
+│       ├── Models/                                   #   数据模型
+│       │   ├── ThemeMode.cs                          #    主题模式枚举
+│       │   └── Toast.cs                              #    Toast 提示条目
+│       └── ViewModels/                               #   视图模型
+│           └── ToastViewModel.cs                     #    Toast 提示视图模型
 ├── tests/                                            # 测试项目目录
 │   ├── ClassSchedule.Domain.Tests/                   #  领域层单元测试
 │   │   ├── ClassSchedule.Domain.Tests.csproj         #   测试项目文件
