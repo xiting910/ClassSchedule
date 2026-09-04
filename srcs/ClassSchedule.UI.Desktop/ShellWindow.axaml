@@ -1,0 +1,11 @@
+<Window x:Class="ClassSchedule.UI.Desktop.ShellWindow"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="using:ClassSchedule.UI.Shared.Views"
+        Icon="Assets/logo.ico"
+        Title="课程表"
+        WindowStartupLocation="CenterScreen">
+
+  <views:ShellView/>
+
+</Window>

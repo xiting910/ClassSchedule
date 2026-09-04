@@ -17,65 +17,20 @@ updates:
       - "dependencies"
       - "nuget"
     groups:
-      # AndroidX 系列包合并更新
-      androidx:
-        patterns:
-          - "Xamarin.AndroidX.*"
-        update-types:
-          - "minor"
-          - "patch"
       # Avalonia 系列包合并更新
       avalonia:
         patterns:
           - "Avalonia*"
-        update-types:
-          - "minor"
-          - "patch"
-      # CommunityToolkit 系列包合并更新
-      communitytoolkit:
-        patterns:
-          - "CommunityToolkit*"
-        update-types:
-          - "minor"
-          - "patch"
       # Entity Framework Core 系列包合并更新
       entity-framework:
         patterns:
           - "Microsoft.EntityFrameworkCore*"
-        update-types:
-          - "minor"
-          - "patch"
       # Microsoft.Extensions.* 系列包合并更新
       microsoft-extensions:
         patterns:
           - "Microsoft.Extensions.*"
-        update-types:
-          - "minor"
-          - "patch"
-      # xUnit 系列包合并更新
-      xunit:
-        patterns:
-          - "xunit*"
-        update-types:
-          - "minor"
-          - "patch"
-      # 覆盖率工具、Mock 框架合并更新
-      test-sdk:
-        patterns:
-          - "coverlet.collector"
-          - "Moq"
-        update-types:
-          - "minor"
-          - "patch"
-      # 其余包合并为一组
-      nuget-catchall:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
     ignore:
-      # Xamarin.AndroidX.Core.SplashScreen 1.2.0+ 与 Avalonia.Android 12.1.1 的 AppCompat 版本冲突
+      # Xamarin.AndroidX.Core.SplashScreen 1.2.0+ 与 Avalonia.Android 的 AppCompat 版本冲突
       - dependency-name: "Xamarin.AndroidX.Core.SplashScreen"
 
   # ── GitHub Actions 工作流依赖更新 ─────────────────────────────────────────

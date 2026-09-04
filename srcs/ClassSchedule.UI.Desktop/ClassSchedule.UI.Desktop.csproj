@@ -12,6 +12,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ClassSchedule.UI.Shared\ClassSchedule.UI.Shared.csproj" />
   </ItemGroup>
 

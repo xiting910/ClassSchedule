@@ -11,32 +11,42 @@ namespace ClassSchedule.Infrastructure;
 public sealed class FileLoggerOptions
 {
     /// <summary>
+    /// 最大日志文件数量字段
+    /// </summary>
+    private int _maxLogFileCount;
+
+    /// <summary>
     /// 最大日志文件数量
     /// </summary>
     public int MaxLogFileCount
     {
-        get;
+        get => _maxLogFileCount;
         set
         {
-            if (field != value)
+            if (_maxLogFileCount != value)
             {
-                field = value;
+                _maxLogFileCount = value;
                 SaveToFile();
             }
         }
     }
 
     /// <summary>
+    /// 最小日志级别字段
+    /// </summary>
+    private LogLevel _minLevel;
+
+    /// <summary>
     /// 最小日志级别
     /// </summary>
     public LogLevel MinLevel
     {
-        get;
+        get => _minLevel;
         set
         {
-            if (field != value)
+            if (_minLevel != value)
             {
-                field = value;
+                _minLevel = value;
                 SaveToFile();
             }
         }
@@ -51,12 +61,12 @@ public sealed class FileLoggerOptions
         var section = configuration.GetSection(nameof(FileLoggerOptions));
 
         const int DefaultMaxLogFileCount = 5, MinMaxLogFileCount = 1, MaxMaxLogFileCount = 10;
-        MaxLogFileCount = int.TryParse(section[nameof(MaxLogFileCount)], out var maxLogFileCount)
+        _maxLogFileCount = int.TryParse(section[nameof(MaxLogFileCount)], out var maxLogFileCount)
             ? Math.Clamp(maxLogFileCount, MinMaxLogFileCount, MaxMaxLogFileCount)
             : DefaultMaxLogFileCount;
 
         const LogLevel DefaultLevel = LogLevel.Information;
-        MinLevel = Enum.TryParse(section[nameof(MinLevel)], out LogLevel minLevel) ? minLevel : DefaultLevel;
+        _minLevel = Enum.TryParse(section[nameof(MinLevel)], out LogLevel minLevel) ? minLevel : DefaultLevel;
     }
 
     /// <summary>
@@ -69,10 +79,15 @@ public sealed class FileLoggerOptions
         {
             [nameof(FileLoggerOptions)] = new JsonObject
             {
-                [nameof(MaxLogFileCount)] = MaxLogFileCount,
-                [nameof(MinLevel)] = MinLevel.ToString()
+                [nameof(MaxLogFileCount)] = _maxLogFileCount,
+                [nameof(MinLevel)] = _minLevel.ToString()
             }
         }.ToJsonString(FileSystem.JsonSerializerOptions);
-        FileSystem.SafeWriteToFile(FileSystem.Settings, LogSettingsFileName, content);
+
+        try
+        {
+            FileSystem.WriteToFile(FileSystem.Settings, LogSettingsFileName, content);
+        }
+        catch { /* 忽略保存日志配置文件时的异常 */ }
     }
 }

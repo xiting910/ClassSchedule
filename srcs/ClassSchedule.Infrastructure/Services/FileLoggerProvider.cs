@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
@@ -119,21 +120,14 @@ internal sealed class FileLoggerProvider : ILoggerProvider
             // 获取最新日志文件的 FileInfo 对象
             var latestLogFileInfo = new FileInfo(_logFilePath);
 
-            // 判断最新日志是否存在
-            if (latestLogFileInfo.Exists)
+            // 如果最新日志文件存在且非空
+            if (latestLogFileInfo.Exists && latestLogFileInfo.Length > 0)
             {
-                // 打开日志文件的读取流
-                using var stream = latestLogFileInfo.OpenRead();
-
-                // 如果读到任何内容, 则说明最新日志文件不为空, 需要轮转日志文件
-                if (stream.ReadByte() != -1)
-                {
-                    // 轮转日志文件: 将最新日志文件移动到以当前时间命名的文件中
-                    latestLogFileInfo.MoveTo(Path.Combine(
-                        FileSystem.Logs.FullName,
-                        $"{_timeProvider.GetLocalNow():yyyy-MM-dd_HHmmss}{FileSystem.LogFileSuffix}"
-                    ));
-                }
+                // 轮转日志文件: 将最新日志文件移动到以当前时间命名的文件中
+                latestLogFileInfo.MoveTo(Path.Combine(
+                    FileSystem.Logs.FullName,
+                    $"{_timeProvider.GetLocalNow():yyyy-MM-dd_HHmmss}{FileSystem.LogFileSuffix}"
+                ));
             }
 
             // 获取所有旧的日志文件, 按时间降序排序, 并跳过最新的 N 个文件
@@ -155,16 +149,14 @@ internal sealed class FileLoggerProvider : ILoggerProvider
     /// </summary>
     private async Task WriteLogToFileAsync()
     {
-        const int BufferSize = 4096;
         await foreach (var line in _channel.Reader.ReadAllAsync().ConfigureAwait(false))
         {
             try
             {
-                _fileStream ??= new(
-                    _logFilePath, FileMode.Append, FileAccess.Write, FileShare.Read, BufferSize, true
-                );
-                _streamWriter ??= new(_fileStream) { AutoFlush = true };
+                _fileStream ??= _logFilePath.OpenAppend();
+                _streamWriter ??= new(_fileStream, new UTF8Encoding(false)) { AutoFlush = true };
                 await _streamWriter.WriteLineAsync(line).ConfigureAwait(false);
+                await _fileStream.FlushAsync().ConfigureAwait(false);
             }
             catch { /* 忽略写入日志文件时的异常 */ }
         }

@@ -10,6 +10,9 @@
 ## [Unreleased]
 
 ### Added
+- 添加应用壳架构, 通过 IShellInitializer 按平台注入壳视图与壳窗口
+- 添加 Toast 提示视图, 支持淡入滑入动画、倒计时进度条、悬停暂停与点击关闭
+- 添加日志导出能力 (文件日志压缩包与未处理异常日志导出)
 - 添加文件日志支持, 通过 Channel 异步写入, 按时间轮转并自动清理旧日志
 - 添加未处理异常落盘记录, 桌面/Android 入口与 UI 线程异常均接入
 - 添加应用数据目录管理, 支持环境变量自定义根目录与 JSON 设置的加载/保存
@@ -22,5 +25,12 @@
 - 添加三层单元测试项目 (xUnit v3 + Moq + MTP)
 - 配置 GitHub Actions CI/CD、CodeQL 安全分析、Dependabot 依赖自动更新
 - 采用集中包管理 (CPM) 统一管理 NuGet 包版本
+
+### Changed
+- 文件写入不再静默吞异常, 改为显式处理并外抛 (SafeWriteToFile 更名为 WriteToFile)
+- 优化文件日志轮转与写入: 空文件不轮转, UTF-8 无 BOM 编码并显式 Flush
+- 未处理异常日志移入应用数据目录, 目录不可用时回退到程序基目录
+- 为 UI 选项与文件日志选项添加结构化日志记录
+- 升级 Avalonia 至 12.1.2 并简化 Dependabot 分组配置
 
 [Unreleased]: https://github.com/xiting910/ClassSchedule/commits/main

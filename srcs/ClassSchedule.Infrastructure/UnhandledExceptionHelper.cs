@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ClassSchedule.Infrastructure;
 
@@ -12,7 +13,7 @@ public static class UnhandledExceptionHelper
     /// <summary>
     /// 未处理异常日志文件名
     /// </summary>
-    private const string UnhandledExceptionLogFileName = $"UnhandledException{FileSystem.LogFileSuffix}";
+    private const string UnhandledExceptionLogFileName = "UnhandledException.txt";
 
     /// <summary>
     /// 锁对象
@@ -20,12 +21,9 @@ public static class UnhandledExceptionHelper
     private static readonly Lock _lock = new();
 
     /// <summary>
-    /// 记录未处理异常的日志文件路径
+    /// 获取记录未处理异常的日志文件路径
     /// </summary>
-    public static string UnhandledExceptionLogFilePath { get; } = Path.Combine(
-        FileSystem.AppDataRootDirectory.FullName,
-        UnhandledExceptionLogFileName
-    );
+    public static string UnhandledExceptionLogFilePath { get; } = GetUnhandledExceptionLogFilePath();
 
     /// <summary>
     /// 处理未处理异常
@@ -36,11 +34,6 @@ public static class UnhandledExceptionHelper
     {
         try
         {
-            if (!FileSystem.AppDataRootDirectory.Exists)
-            {
-                FileSystem.AppDataRootDirectory.Create();
-            }
-
             lock (_lock)
             {
                 File.AppendAllText(
@@ -52,5 +45,47 @@ public static class UnhandledExceptionHelper
             }
         }
         catch { /* 忽略写日志时发生的异常 */ }
+    }
+
+    /// <summary>
+    /// 如果存在未处理异常日志, 则异步导出未处理异常日志到指定流
+    /// </summary>
+    /// <remarks>
+    /// 该方法不会捕获任何异常, 所有的异常都会被外抛到调用方, 调用方需要自行处理异常
+    /// </remarks>
+    /// <param name="stream">目标流</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    public static async Task ExportLogAsync(Stream stream, CancellationToken cancellationToken = default)
+    {
+        if (File.Exists(UnhandledExceptionLogFilePath))
+        {
+            await using var fileStream = UnhandledExceptionLogFilePath.OpenRead();
+            await fileStream.CopyToAsync(stream, cancellationToken);
+        }
+    }
+
+    /// <summary>
+    /// 获取未处理异常日志文件路径
+    /// </summary>
+    /// <returns>未处理异常日志文件路径</returns>
+    private static string GetUnhandledExceptionLogFilePath()
+    {
+        try
+        {
+            // 如果 FileSystem 可用, 则创建 AppDataRootDirectory
+            if (!FileSystem.AppDataRootDirectory.Exists)
+            {
+                FileSystem.AppDataRootDirectory.Create();
+            }
+
+            // 返回 AppDataRootDirectory 下的 UnhandledExceptionLogFileName
+            return Path.Combine(FileSystem.AppDataRootDirectory.FullName, UnhandledExceptionLogFileName);
+        }
+        catch
+        {
+            // 如果 FileSystem 异常, 则返回 AppContext.BaseDirectory 下的 UnhandledExceptionLogFileName
+            // AppContext.BaseDirectory 在桌面端返回应用程序的根目录, 在安卓端返回应用内部 files 目录
+            return Path.Combine(AppContext.BaseDirectory, UnhandledExceptionLogFileName);
+        }
     }
 }

@@ -42,6 +42,7 @@ file static class Program
             .AddDomain()
             .AddInfrastructure()
             .AddUIShared()
+            .AddSingleton<IShellInitializer, ShellInitializer>()
             .BuildServiceProvider();
 
         App.Services = service;

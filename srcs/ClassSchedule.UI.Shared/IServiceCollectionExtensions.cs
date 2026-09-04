@@ -22,6 +22,7 @@ public static class IServiceCollectionExtensions
         {
             return services
                 .AddSingleton<UIOptions>()
+                .AddSingleton<ShellViewModel>()
                 .AddSingleton<ToastViewModel>();
         }
     }

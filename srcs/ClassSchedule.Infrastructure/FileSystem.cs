@@ -1,7 +1,10 @@
 using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ClassSchedule.Infrastructure;
 
@@ -58,6 +61,15 @@ public static class FileSystem
     /// <summary>
     /// 静态构造函数, 确保在第一次访问任何成员之前, 初始化相关的属性并创建必要的目录
     /// </summary>
+    /// <remarks><para>
+    /// 本方法中的 I/O 操作可能失败, 此时 CLR 会将异常包装为 <see cref="TypeInitializationException"/>
+    /// 抛出, 之后对本类的任何访问都会再次抛出该异常, 进程内无法恢复
+    /// <para></para>
+    /// 这是刻意的 fail-fast 设计: 该方法失败说明用户的环境变量设置不正确或者程序没有足够的权限访问文件系统等等,
+    /// 这些情况都无法在进程内恢复并且不是程序自身的问题, 应该由用户自行解决后重启程序
+    /// <para></para>
+    /// 本程序仅在 <see cref="UnhandledExceptionHelper"/> 中记录未处理异常日志, 以便用户可以查看异常信息
+    /// </para></remarks>
     static FileSystem()
     {
         // 根据操作系统设置字符串比较器, Windows 系统使用不区分大小写的比较器, 其他系统使用区分大小写的比较器
@@ -97,23 +109,43 @@ public static class FileSystem
     }
 
     /// <summary>
-    /// 安全地将指定内容写入指定目录下的指定文件, 如果目录不存在, 则创建该目录
+    /// 将指定内容写入指定目录下的指定文件, 如果目录不存在, 则创建该目录
     /// </summary>
+    /// <remarks>
+    /// 该方法不会捕获任何异常, 所有的异常都会被外抛到调用方, 调用方需要自行处理异常
+    /// </remarks>
     /// <param name="directory">指定的目录</param>
     /// <param name="fileName">要写入的文件名</param>
     /// <param name="content">要写入的内容</param>
-    public static void SafeWriteToFile(DirectoryInfo directory, string fileName, string content)
+    public static void WriteToFile(DirectoryInfo directory, string fileName, string content)
     {
-        try
+        if (!directory.Exists)
         {
-            if (!directory.Exists)
-            {
-                directory.Create();
-            }
-
-            File.WriteAllText(Path.Combine(directory.FullName, fileName), content);
+            directory.Create();
         }
-        catch (Exception) { }
+        File.WriteAllText(Path.Combine(directory.FullName, fileName), content);
+    }
+
+    /// <summary>
+    /// 如果存在日志文件夹, 则异步导出日志文件夹压缩包到指定流
+    /// </summary>
+    /// <remarks>
+    /// 该方法不会捕获任何异常, 所有的异常都会被外抛到调用方, 调用方需要自行处理异常
+    /// </remarks>
+    /// <param name="stream">目标流</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    public static async Task ExportLogsAsync(Stream stream, CancellationToken cancellationToken = default)
+    {
+        if (Logs.Exists)
+        {
+            await using var zipArchive = new ZipArchive(stream, ZipArchiveMode.Create, true);
+            foreach (var logFile in Logs.EnumerateFiles($"*{LogFileSuffix}"))
+            {
+                await using var entryStream = zipArchive.CreateEntry(logFile.Name).Open();
+                await using var logFileStream = logFile.FullName.OpenRead();
+                await logFileStream.CopyToAsync(entryStream, cancellationToken);
+            }
+        }
     }
 
     /// <summary>
@@ -128,13 +160,16 @@ public static class FileSystem
         /// <returns>配置构建器</returns>
         public IConfigurationBuilder AddJsonFilesFromSettings()
         {
-            // 遍历所有的设置文件, 将所有的设置文件加载到配置构建器中
-            foreach (var file in Settings.EnumerateFiles($"*{JsonFileSuffix}"))
+            // 如果设置目录存在, 则遍历所有的 JSON 文件并添加到配置构建器中
+            if (Settings.Exists)
             {
-                _ = builder.AddJsonFile(file.FullName);
+                foreach (var file in Settings.EnumerateFiles($"*{JsonFileSuffix}"))
+                {
+                    _ = builder.AddJsonFile(file.FullName);
+                }
             }
 
-            // 构建配置对象并返回
+            // 返回配置构建器
             return builder;
         }
     }

@@ -53,6 +53,7 @@ public class MainApplication : AvaloniaAndroidApplication<App>
             .AddDomain()
             .AddInfrastructure()
             .AddUIShared()
+            .AddSingleton<IShellInitializer, ShellInitializer>()
             .BuildServiceProvider();
 
         return base.CustomizeAppBuilder(builder).WithInterFont().LogToTrace();

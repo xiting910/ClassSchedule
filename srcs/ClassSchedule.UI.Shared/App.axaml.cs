@@ -1,5 +1,4 @@
 using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Styling;
 using ClassSchedule.Infrastructure;
 using ClassSchedule.UI.Shared.Models;
@@ -30,8 +29,11 @@ public sealed partial class App : Application
     {
         base.OnFrameworkInitializationCompleted();
 
+        // 获取服务容器
+        var services = Services;
+
         // 获取提示视图模型, 以便在未处理异常时显示提示
-        var toastViewModel = Services.GetRequiredService<ToastViewModel>();
+        var toastViewModel = services.GetRequiredService<ToastViewModel>();
 
         // 处理未处理的 UI 线程异常, 显示提示并写入日志文件
         Avalonia.Threading.Dispatcher.UIThread.UnhandledException += (_, e) =>
@@ -51,35 +53,23 @@ public sealed partial class App : Application
         {
             var ex = e.Exception;
             UnhandledExceptionHelper.HandleException(false, ex);
-            toastViewModel.Show(
+            Avalonia.Threading.Dispatcher.UIThread.Post(() => toastViewModel.Show(
                 $"发生未处理的任务异常: {ex.Message}, 阅读 " +
                 UnhandledExceptionHelper.UnhandledExceptionLogFilePath +
                 " 以查看详细信息"
-            );
+            ));
             e.SetObserved();
         };
 
         // 按配置的主题模式应用主题
-        Current?.RequestedThemeVariant = Services.GetRequiredService<UIOptions>().Theme switch
+        Current?.RequestedThemeVariant = services.GetRequiredService<UIOptions>().Theme switch
         {
             ThemeMode.Light => ThemeVariant.Light,
             ThemeMode.Dark => ThemeVariant.Dark,
             _ => ThemeVariant.Default
         };
 
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            // desktop.MainWindow = new ShellWindow
-            // {
-            //     DataContext = Services.GetRequiredService<ShellViewModel>()
-            // };
-        }
-        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
-        {
-            // singleView.MainView = new ShellView
-            // {
-            //     DataContext = Services.GetRequiredService<ShellViewModel>()
-            // };
-        }
+        // 初始化应用的核心壳视图
+        services.GetRequiredService<IShellInitializer>().Initialize(ApplicationLifetime);
     }
 }

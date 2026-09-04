@@ -18,12 +18,14 @@
 
         <!-- 浅色主题 -->
         <ResourceDictionary x:Key="Light">
-
+          <SolidColorBrush x:Key="ToastBackgroundBrush" Color="#E6E27508"/>
+          <SolidColorBrush x:Key="ToastProgressBrush" Color="#8DD30C"/>
         </ResourceDictionary>
 
         <!-- 深色主题 -->
         <ResourceDictionary x:Key="Dark">
-
+          <SolidColorBrush x:Key="ToastBackgroundBrush" Color="#E6200E02"/>
+          <SolidColorBrush x:Key="ToastProgressBrush" Color="#1B2C03"/>
         </ResourceDictionary>
 
       </ResourceDictionary.ThemeDictionaries>
