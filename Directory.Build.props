@@ -38,7 +38,7 @@
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <NoWarn>$(NoWarn);CA1707;MTP0001</NoWarn>
+    <NoWarn>$(NoWarn);CA1707;CA1848;CA1873;MTP0001</NoWarn>
   </PropertyGroup>
 
   <!-- 仅测试项目: 引用测试相关的 NuGet 包 -->

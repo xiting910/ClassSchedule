@@ -16,7 +16,7 @@ internal sealed class FileLoggerProvider : ILoggerProvider
     /// <summary>
     /// 最新日志文件名
     /// </summary>
-    private const string LatestLogFileName = $"latest{FileSystem.LogFileSuffix}";
+    private const string LatestLogFileName = $"Latest{FileSystem.LogFileSuffix}";
 
     /// <summary>
     /// 时间提供器, 用于获取当前时间
@@ -202,7 +202,8 @@ internal sealed class FileLoggerProvider : ILoggerProvider
                 // 拼接日志行: 时间戳, 级别缩写, 类别名称, 事件ID, 事件名, 日志内容, 异常信息
                 var line = $"[{_timeProvider.GetLocalNow():yyyy-MM-dd HH:mm:ss.fff}] "
                     + $"[{logLevel}] [{_categoryName}] ({eventId.Id} {eventId.Name}) "
-                    + formatter(state, exception);
+                    + $"{formatter(state, exception)} "
+                    + (exception is null ? string.Empty : exception);
 
                 // 写入日志到通道
                 _ = _channelWriter.TryWrite(line);

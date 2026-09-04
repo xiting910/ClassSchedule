@@ -27,7 +27,7 @@ public sealed partial class ToastViewModel : ObservableObject
     /// <summary>
     /// 进度条刷新计时器, 驱动所有条目的剩余时间扣减与进度条更新, 集合为空时停止
     /// </summary>
-    private readonly DispatcherTimer _refreshTimer;
+    internal readonly DispatcherTimer refreshTimer;
 
     /// <summary>
     /// 高精度计时器, 用于计算实际经过的时间
@@ -60,7 +60,7 @@ public sealed partial class ToastViewModel : ObservableObject
         _logger = logger;
         _stopwatch = new();
         _uiOptions = uiOptions;
-        _refreshTimer = new(RefreshInterval, DispatcherPriority.Background, OnRefreshTimerTick);
+        refreshTimer = new(RefreshInterval, DispatcherPriority.Background, OnRefreshTimerTick);
         Items.CollectionChanged += OnItemsCollectionChanged;
     }
 
@@ -101,7 +101,7 @@ public sealed partial class ToastViewModel : ObservableObject
         });
 
         // 启动计时器驱动进度条扣减
-        _refreshTimer.Start();
+        refreshTimer.Start();
         _stopwatch.Restart();
 
         // 记录日志
@@ -123,7 +123,7 @@ public sealed partial class ToastViewModel : ObservableObject
     /// </summary>
     /// <param name="sender">计时器</param>
     /// <param name="e">计时器事件参数</param>
-    private void OnRefreshTimerTick(object? sender, EventArgs e)
+    internal void OnRefreshTimerTick(object? sender, EventArgs e)
     {
         // 计算实际经过的时间, 并重启计时器
         var delta = _stopwatch.Elapsed;
@@ -149,7 +149,7 @@ public sealed partial class ToastViewModel : ObservableObject
         HasItems = Items.Count > 0;
         if (Items.Count == 0)
         {
-            _refreshTimer.Stop();
+            refreshTimer.Stop();
             _stopwatch.Stop();
         }
     }

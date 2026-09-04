@@ -10,6 +10,8 @@
 ## [Unreleased]
 
 ### Added
+- 添加基础设施层单元测试, 覆盖文件日志、文件系统、字符串扩展与未处理异常辅助类
+- 添加 UI 共享层单元测试, 覆盖 Toast、UI 选项、视图定位器与组合根等, 引入 Avalonia.Headless 无头测试环境
 - 添加应用壳架构, 通过 IShellInitializer 按平台注入壳视图与壳窗口
 - 添加 Toast 提示视图, 支持淡入滑入动画、倒计时进度条、悬停暂停与点击关闭
 - 添加日志导出能力 (文件日志压缩包与未处理异常日志导出)
@@ -32,5 +34,8 @@
 - 未处理异常日志移入应用数据目录, 目录不可用时回退到程序基目录
 - 为 UI 选项与文件日志选项添加结构化日志记录
 - 升级 Avalonia 至 12.1.2 并简化 Dependabot 分组配置
+
+### Fixed
+- 修复文件日志丢失异常信息的问题, 异常文本现在会写入日志行
 
 [Unreleased]: https://github.com/xiting910/ClassSchedule/commits/main
