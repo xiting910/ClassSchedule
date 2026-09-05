@@ -73,6 +73,9 @@ ClassSchedule/
 │   └── PULL_REQUEST_TEMPLATE.md                                #  PR 描述模板
 ├── srcs/                                                       # 源码目录
 │   ├── ClassSchedule.Domain/                                   #  领域层
+│   │   ├── Models/                                             #   领域模型
+│   │   │   ├── Weekday.cs                                      #    星期枚举
+│   │   │   └── WeekRange.cs                                    #    周段模型
 │   │   ├── ClassSchedule.Domain.csproj                         #   项目文件
 │   │   └── IServiceCollectionExtensions.cs                     #   DI 注册扩展
 │   ├── ClassSchedule.Infrastructure/                           #  基础设施层
@@ -140,7 +143,7 @@ ClassSchedule/
 ├── tests/                                                      # 测试项目目录
 │   ├── ClassSchedule.Domain.Tests/                             #  领域层单元测试
 │   │   ├── ClassSchedule.Domain.Tests.csproj                   #   测试项目文件
-│   │   └── SmokeTests.cs                                       #   冒烟测试
+│   │   └── WeekRangeTests.cs                                   #   周段模型单元测试
 │   ├── ClassSchedule.Infrastructure.Tests/                     #  基础设施层单元测试
 │   │   ├── AssemblyInfo.cs                                     #   程序集级夹具与并行配置
 │   │   ├── ClassSchedule.Infrastructure.Tests.csproj           #   测试项目文件

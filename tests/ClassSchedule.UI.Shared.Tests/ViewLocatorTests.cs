@@ -61,10 +61,6 @@ public sealed class ViewLocatorTests
     /// <summary>
     /// 验证 <see cref="ViewLocator.Build"/> 能按类型名定位并创建对应视图控件
     /// </summary>
-    /// <remarks>
-    /// <see cref="Type.GetType(string)"/> 只在 ViewLocator 所在程序集 (UI.Shared) 内解析类型,
-    /// 因此命中分支需使用生产程序集中真实存在的 ViewModel→View 对
-    /// </remarks>
     [Fact]
     public async Task Build_视图模型_创建对应视图控件()
     {
@@ -81,9 +77,6 @@ public sealed class ViewLocatorTests
     /// <summary>
     /// 验证 <see cref="ViewLocator.Build"/> 在找不到对应视图时返回未找到提示控件
     /// </summary>
-    /// <remarks>
-    /// 测试程序集的假视图模型在 UI.Shared 程序集内没有对应视图, 触发未找到分支
-    /// </remarks>
     [Fact]
     public async Task Build_无对应视图_返回未找到提示()
     {

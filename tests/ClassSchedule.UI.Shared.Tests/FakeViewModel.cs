@@ -1,4 +1,4 @@
-#pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
+#pragma warning disable IDE0130
 namespace ClassSchedule.UI.Shared.ViewModels;
 
 /// <summary>

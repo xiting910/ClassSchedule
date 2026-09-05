@@ -10,6 +10,7 @@
 ## [Unreleased]
 
 ### Added
+- 添加 WeekRange 周段模型与 Weekday 星期枚举领域模型, 周段支持包含与交集判断
 - 添加基础设施层单元测试, 覆盖文件日志、文件系统、字符串扩展与未处理异常辅助类
 - 添加 UI 共享层单元测试, 覆盖 Toast、UI 选项、视图定位器与组合根等, 引入 Avalonia.Headless 无头测试环境
 - 添加应用壳架构, 通过 IShellInitializer 按平台注入壳视图与壳窗口
