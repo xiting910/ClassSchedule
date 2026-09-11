@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace ClassSchedule.Infrastructure;
 
@@ -20,9 +19,7 @@ public static class IServiceCollectionExtensions
         /// <returns>服务集合</returns>
         public IServiceCollection AddInfrastructure()
         {
-            return services
-                .AddSingleton(TimeProvider.System)
-                .AddSingleton<FileLoggerOptions>();
+            return services.AddSingleton<FileLoggerOptions>();
         }
     }
 }

@@ -74,9 +74,12 @@ ClassSchedule/
 ├── srcs/                                                       # 源码目录
 │   ├── ClassSchedule.Domain/                                   #  领域层
 │   │   ├── Models/                                             #   领域模型
-│   │   │   ├── Weekday.cs                                      #    星期枚举
-│   │   │   └── WeekRange.cs                                    #    周段模型
+│   │   │   ├── ErrorCode.cs                                    #    错误码枚举
+│   │   │   ├── OrdinalRange.cs                                 #    序数闭区间模型
+│   │   │   ├── Result.cs                                       #    结果类型层次结构
+│   │   │   └── Weekday.cs                                      #    星期枚举
 │   │   ├── ClassSchedule.Domain.csproj                         #   项目文件
+│   │   ├── EnumExtensions.cs                                   #   枚举扩展成员
 │   │   └── IServiceCollectionExtensions.cs                     #   DI 注册扩展
 │   ├── ClassSchedule.Infrastructure/                           #  基础设施层
 │   │   ├── Services/                                           #   服务实现
@@ -143,7 +146,10 @@ ClassSchedule/
 ├── tests/                                                      # 测试项目目录
 │   ├── ClassSchedule.Domain.Tests/                             #  领域层单元测试
 │   │   ├── ClassSchedule.Domain.Tests.csproj                   #   测试项目文件
-│   │   └── WeekRangeTests.cs                                   #   周段模型单元测试
+│   │   ├── EnumExtensionsTests.cs                              #   枚举扩展单元测试
+│   │   ├── ErrorCodeTests.cs                                   #   错误码单元测试
+│   │   ├── OrdinalRangeTests.cs                                #   序数闭区间单元测试
+│   │   └── ResultTests.cs                                      #   结果类型单元测试
 │   ├── ClassSchedule.Infrastructure.Tests/                     #  基础设施层单元测试
 │   │   ├── AssemblyInfo.cs                                     #   程序集级夹具与并行配置
 │   │   ├── ClassSchedule.Infrastructure.Tests.csproj           #   测试项目文件

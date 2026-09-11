@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace ClassSchedule.Domain;
 
@@ -19,7 +20,7 @@ public static class IServiceCollectionExtensions
         /// <returns>服务集合</returns>
         public IServiceCollection AddDomain()
         {
-            return services;
+            return services.AddSingleton(TimeProvider.System);
         }
     }
 }
