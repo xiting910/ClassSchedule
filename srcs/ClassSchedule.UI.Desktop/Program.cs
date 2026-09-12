@@ -1,5 +1,4 @@
 using Avalonia;
-using ClassSchedule.Domain;
 using ClassSchedule.Infrastructure;
 using ClassSchedule.UI.Shared;
 using Microsoft.Extensions.Configuration;
@@ -39,7 +38,6 @@ file static class Program
         using var service = new ServiceCollection()
             .AddSingleton<IConfiguration>(config)
             .AddLogging(builder => builder.AddFileLogger())
-            .AddDomain()
             .AddInfrastructure()
             .AddUIShared()
             .AddSingleton<IShellInitializer, ShellInitializer>()

@@ -10,6 +10,7 @@
 ## [Unreleased]
 
 ### Added
+- 启用全局 TreatWarningsAsErrors, 所有编译器警告视为错误
 - 添加 WeekRange 周段模型与 Weekday 星期枚举领域模型, 周段支持包含与交集判断
 - 添加 OrdinalRange 序数闭区间模型, 支持包含与交集判断, 并支持区间列表排序、相邻合并与重叠判定的归一化
 - 添加 Result 结果类型层次结构, 由无值成功、带值成功与失败三个封闭子类型区分, 非法状态不可表示
@@ -36,6 +37,7 @@
 - 采用集中包管理 (CPM) 统一管理 NuGet 包版本
 
 ### Changed
+- TimeProvider.System 的注册由 AddDomain 迁回 AddInfrastructure, Domain 层不再引用依赖注入抽象包
 - TimeProvider.System 的注册由 AddInfrastructure 迁移到 AddDomain
 - 文件写入不再静默吞异常, 改为显式处理并外抛 (SafeWriteToFile 更名为 WriteToFile)
 - 优化文件日志轮转与写入: 空文件不轮转, UTF-8 无 BOM 编码并显式 Flush
@@ -44,6 +46,8 @@
 - 升级 Avalonia 至 12.1.2 并简化 Dependabot 分组配置
 
 ### Removed
+- 移除 Domain 层的 DI 注册扩展 AddDomain 及其依赖注入抽象包引用, 使领域层保持零依赖
+- 移除桌面端、安卓端与 UI 共享层测试的组合根中对 AddDomain 的调用
 - 移除 WeekRange 周段模型, 由 OrdinalRange 取代, 使周次与节次共用同一个序数闭区间类型
 - 移除 WeekRangeTests 单元测试类, 由 OrdinalRangeTests 覆盖序数闭区间及其归一化
 

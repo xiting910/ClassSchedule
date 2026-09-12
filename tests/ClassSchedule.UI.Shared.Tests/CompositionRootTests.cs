@@ -1,5 +1,4 @@
 using Avalonia.Controls.ApplicationLifetimes;
-using ClassSchedule.Domain;
 using ClassSchedule.Infrastructure;
 using ClassSchedule.UI.Shared.ViewModels;
 using Microsoft.Extensions.Configuration;
@@ -31,7 +30,6 @@ public sealed class CompositionRootTests
         return new ServiceCollection()
             .AddSingleton<IConfiguration>(new ConfigurationBuilder().Build())
             .AddLogging(builder => builder.AddFileLogger())
-            .AddDomain()
             .AddInfrastructure()
             .AddUIShared()
             .AddSingleton<IShellInitializer, StubShellInitializer>()

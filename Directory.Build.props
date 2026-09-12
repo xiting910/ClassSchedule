@@ -3,6 +3,7 @@
   <!-- 所有项目共用的属性 -->
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <Nullable>enable</Nullable>
     <NoWarn>$(NoWarn);NU1507</NoWarn>

@@ -2,7 +2,6 @@
 using Android.Runtime;
 using Avalonia;
 using Avalonia.Android;
-using ClassSchedule.Domain;
 using ClassSchedule.Infrastructure;
 using ClassSchedule.UI.Shared;
 using Microsoft.Extensions.Configuration;
@@ -50,7 +49,6 @@ public class MainApplication : AvaloniaAndroidApplication<App>
         App.Services = new ServiceCollection()
             .AddSingleton<IConfiguration>(config)
             .AddLogging(builder => builder.AddFileLogger())
-            .AddDomain()
             .AddInfrastructure()
             .AddUIShared()
             .AddSingleton<IShellInitializer, ShellInitializer>()

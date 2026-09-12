@@ -79,8 +79,7 @@ ClassSchedule/
 │   │   │   ├── Result.cs                                       #    结果类型层次结构
 │   │   │   └── Weekday.cs                                      #    星期枚举
 │   │   ├── ClassSchedule.Domain.csproj                         #   项目文件
-│   │   ├── EnumExtensions.cs                                   #   枚举扩展成员
-│   │   └── IServiceCollectionExtensions.cs                     #   DI 注册扩展
+│   │   └── EnumExtensions.cs                                   #   枚举扩展成员
 │   ├── ClassSchedule.Infrastructure/                           #  基础设施层
 │   │   ├── Services/                                           #   服务实现
 │   │   │   └── FileLoggerProvider.cs                           #    文件日志提供器
