@@ -18,9 +18,12 @@
 - 添加 EnumExtensions.GetDescription, 反射读取枚举成员的 Description 特性, 缺失时回退成员名
 - 添加 Timetable 课程表聚合根, 按分部类拆分为节次, 课程与片段三组操作
 - 添加 Course、Fragment 与 PeriodDefinition 实体, 均为按身份比较的封闭类
+- 添加 SemesterDay 学期日模型, 由学期周次与星期几两个字段组成
+- 添加 Timetable.TryGetSemesterDay, 按首周周一与总周数换算日期对应的学期周次与星期几
 - 添加 DateOnlyExtensions.GetMonday 与 DayOfWeekExtensions.ToWeekday 扩展成员
 - 扩展 ErrorCode 错误码枚举, 补充课程表, 周次, 课程, 片段与节次相关失败码
 - 添加课程表聚合的领域层单元测试, 覆盖节次归并, 占用校验与片段重叠判定
+- 添加 Timetable.TryGetSemesterDay 的领域层单元测试, 覆盖学期上下边界与跨年周号连续性
 - 添加 OrdinalRangeTests 领域层单元测试, 覆盖序数闭区间归一化的排序、相邻合并与重叠拒绝场景
 - 添加 Result、ErrorCode 与 EnumExtensions 的领域层单元测试, 覆盖结果层次结构、错误码描述完备性与枚举描述回退
 - 添加基础设施层单元测试, 覆盖文件日志、文件系统、字符串扩展与未处理异常辅助类

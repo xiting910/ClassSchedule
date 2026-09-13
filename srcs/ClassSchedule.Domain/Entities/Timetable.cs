@@ -1,6 +1,7 @@
 using ClassSchedule.Domain.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ClassSchedule.Domain.Entities;
 
@@ -114,6 +115,31 @@ public sealed partial class Timetable : IEquatable<Timetable>
     public void EnsurePeriodDefinitionsSorted()
     {
         _periodDefinitions.Sort((a, b) => a.Ordinal.CompareTo(b.Ordinal));
+    }
+
+    /// <summary>
+    /// 尝试获取指定日期对应的学期周次和星期几
+    /// </summary>
+    /// <param name="date">要查询的日期</param>
+    /// <param name="semesterDay">对应的学期周次和星期几</param>
+    /// <returns><see langword="true"/> 如果指定日期在课程表的学期范围内, 否则为 <see langword="false"/></returns>
+    public bool TryGetSemesterDay(DateOnly date, [MaybeNullWhen(false)] out SemesterDay semesterDay)
+    {
+        semesterDay = default;
+        if (date < FirstMonday)
+        {
+            return false;
+        }
+
+        const int DaysInWeek = 7;
+        var week = ((date.DayNumber - FirstMonday.DayNumber) / DaysInWeek) + 1;
+        if (week > TotalWeeks)
+        {
+            return false;
+        }
+
+        semesterDay = new(week, date.DayOfWeek.ToWeekday());
+        return true;
     }
 
     /// <summary>

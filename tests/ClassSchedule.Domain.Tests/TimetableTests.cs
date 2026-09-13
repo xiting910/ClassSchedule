@@ -25,6 +25,18 @@ public sealed class TimetableTests
     }
 
     /// <summary>
+    /// 创建指定首周日期与总周数的测试用课程表
+    /// </summary>
+    /// <param name="firstDay">课程表第一周的任意一天日期</param>
+    /// <param name="totalWeeks">总周数</param>
+    /// <returns>课程表</returns>
+    private static Timetable CreateTimetable(DateOnly firstDay, int totalWeeks)
+    {
+        var result = Timetable.Create("测试课表", firstDay, totalWeeks);
+        return Assert.IsType<SuccessResult<Timetable>>(result).Value;
+    }
+
+    /// <summary>
     /// 创建一节测试用的课并返回其课程标识
     /// </summary>
     /// <param name="timetable">课程表</param>
@@ -211,5 +223,146 @@ public sealed class TimetableTests
 
         _ = Assert.IsType<SuccessResult>(result);
         Assert.Equal(20, timetable.TotalWeeks);
+    }
+
+    /// <summary>
+    /// 验证 <see cref="Timetable.TryGetSemesterDay"/> 在日期为首周周一时返回第 1 周星期一
+    /// </summary>
+    [Fact]
+    public void TryGetSemesterDay_DateAtFirstMonday_ShouldReturnFirstWeekMonday()
+    {
+        var timetable = CreateTimetable(new(2026, 3, 2), 16);
+
+        var isWithinSemester = timetable.TryGetSemesterDay(new(2026, 3, 2), out var semesterDay);
+
+        Assert.True(isWithinSemester);
+        Assert.Equal(1, semesterDay.Week);
+        Assert.Equal(Weekday.Monday, semesterDay.Weekday);
+    }
+
+    /// <summary>
+    /// 验证 <see cref="Timetable.TryGetSemesterDay"/> 在日期为首周周日时仍返回第 1 周, 即首周是完整 7 天
+    /// </summary>
+    [Fact]
+    public void TryGetSemesterDay_LastDayOfFirstWeek_ShouldReturnFirstWeekSunday()
+    {
+        var timetable = CreateTimetable(new(2026, 3, 2), 16);
+
+        var isWithinSemester = timetable.TryGetSemesterDay(new(2026, 3, 8), out var semesterDay);
+
+        Assert.True(isWithinSemester);
+        Assert.Equal(1, semesterDay.Week);
+        Assert.Equal(Weekday.Sunday, semesterDay.Weekday);
+    }
+
+    /// <summary>
+    /// 验证 <see cref="Timetable.TryGetSemesterDay"/> 在日期为首周之后满 7 天时返回第 2 周
+    /// </summary>
+    [Fact]
+    public void TryGetSemesterDay_DateInSecondWeek_ShouldReturnSecondWeek()
+    {
+        var timetable = CreateTimetable(new(2026, 3, 2), 16);
+
+        var isWithinSemester = timetable.TryGetSemesterDay(new(2026, 3, 9), out var semesterDay);
+
+        Assert.True(isWithinSemester);
+        Assert.Equal(2, semesterDay.Week);
+    }
+
+    /// <summary>
+    /// 验证 <see cref="Timetable.TryGetSemesterDay"/> 在日期为学期最后一周周日时返回总周数(上边界)
+    /// </summary>
+    [Fact]
+    public void TryGetSemesterDay_LastDayOfSemester_ShouldReturnTotalWeeks()
+    {
+        var timetable = CreateTimetable(new(2026, 3, 2), 16);
+
+        var isWithinSemester = timetable.TryGetSemesterDay(new(2026, 6, 21), out var semesterDay);
+
+        Assert.True(isWithinSemester);
+        Assert.Equal(16, semesterDay.Week);
+        Assert.Equal(Weekday.Sunday, semesterDay.Weekday);
+    }
+
+    /// <summary>
+    /// 验证 <see cref="Timetable.TryGetSemesterDay"/> 在日期为首周周一的前一天时返回
+    /// <see langword="false"/> —— 整数除法向零截断而非向下取整, 这是该边界的回归测试
+    /// </summary>
+    [Fact]
+    public void TryGetSemesterDay_DayBeforeFirstMonday_ShouldReturnFailure()
+    {
+        var timetable = CreateTimetable(new(2026, 3, 2), 16);
+
+        var isWithinSemester = timetable.TryGetSemesterDay(new(2026, 3, 1), out _);
+
+        Assert.False(isWithinSemester);
+    }
+
+    /// <summary>
+    /// 验证 <see cref="Timetable.TryGetSemesterDay"/> 在日期为学期最后一周周日的次日时返回
+    /// <see langword="false"/>
+    /// </summary>
+    [Fact]
+    public void TryGetSemesterDay_DayAfterLastSemesterDay_ShouldReturnFailure()
+    {
+        var timetable = CreateTimetable(new(2026, 3, 2), 16);
+
+        var isWithinSemester = timetable.TryGetSemesterDay(new(2026, 6, 22), out _);
+
+        Assert.False(isWithinSemester);
+    }
+
+    /// <summary>
+    /// 验证 <see cref="Timetable.TryGetSemesterDay"/> 在日期远离学期范围(含
+    /// <see cref="DateOnly.MinValue"/> 与 <see cref="DateOnly.MaxValue"/>)时返回
+    /// <see langword="false"/> 且不抛异常
+    /// </summary>
+    /// <param name="year">年</param>
+    /// <param name="month">月</param>
+    /// <param name="day">日</param>
+    [Theory]
+    [InlineData(2026, 1, 1)]
+    [InlineData(2027, 12, 31)]
+    [InlineData(1, 1, 1)]
+    [InlineData(9999, 12, 31)]
+    public void TryGetSemesterDay_DateFarOutsideSemester_ShouldReturnFailure(int year, int month, int day)
+    {
+        var timetable = CreateTimetable(new(2026, 3, 2), 16);
+
+        var isWithinSemester = timetable.TryGetSemesterDay(new(year, month, day), out _);
+
+        Assert.False(isWithinSemester);
+    }
+
+    /// <summary>
+    /// 验证 <see cref="Timetable.TryGetSemesterDay"/> 在学期跨越日历年时周号仍按日期差连续递增
+    /// </summary>
+    [Fact]
+    public void TryGetSemesterDay_SemesterAcrossYearBoundary_ShouldKeepWeekNumberContinuous()
+    {
+        var timetable = CreateTimetable(SampleMonday, 20);
+
+        var isLastDayOfYearInSemester = timetable.TryGetSemesterDay(new(2026, 12, 31), out var lastDayOfYear);
+        var isFirstDayOfYearInSemester = timetable.TryGetSemesterDay(new(2027, 1, 1), out var firstDayOfYear);
+
+        Assert.True(isLastDayOfYearInSemester);
+        Assert.True(isFirstDayOfYearInSemester);
+        Assert.Equal(18, lastDayOfYear.Week);
+        Assert.Equal(18, firstDayOfYear.Week);
+    }
+
+    /// <summary>
+    /// 验证 <see cref="Timetable.TryGetSemesterDay"/> 以归一化后的首周周一为锚点, 而非创建时传入的那一天
+    /// </summary>
+    [Fact]
+    public void TryGetSemesterDay_NonMondayFirstDay_ShouldUseNormalizedFirstMonday()
+    {
+        var timetable = CreateTimetable(new(2026, 9, 2), 16);
+
+        var isWithinSemester = timetable.TryGetSemesterDay(SampleMonday, out var semesterDay);
+
+        Assert.True(isWithinSemester);
+        Assert.Equal(1, semesterDay.Week);
+        Assert.Equal(Weekday.Monday, semesterDay.Weekday);
     }
 }

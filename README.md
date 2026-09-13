@@ -85,6 +85,7 @@ ClassSchedule/
 │   │   │   ├── ErrorCode.cs                                    #    错误码枚举
 │   │   │   ├── OrdinalRange.cs                                 #    序数闭区间模型
 │   │   │   ├── Result.cs                                       #    结果类型层次结构
+│   │   │   ├── SemesterDay.cs                                  #    学期日模型
 │   │   │   └── Weekday.cs                                      #    星期枚举
 │   │   ├── ClassSchedule.Domain.csproj                         #   项目文件
 │   │   ├── DateOnlyExtensions.cs                               #   DateOnly 扩展成员
