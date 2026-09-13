@@ -73,12 +73,22 @@ ClassSchedule/
 │   └── PULL_REQUEST_TEMPLATE.md                                #  PR 描述模板
 ├── srcs/                                                       # 源码目录
 │   ├── ClassSchedule.Domain/                                   #  领域层
+│   │   ├── Entities/                                           #   领域实体
+│   │   │   ├── Course.cs                                       #    课程实体
+│   │   │   ├── Fragment.cs                                     #    课程片段实体
+│   │   │   ├── PeriodDefinition.cs                             #    课程节次定义实体
+│   │   │   ├── Timetable.cs                                    #    课程表实体
+│   │   │   ├── Timetable.Course.cs                             #    课程表课程操作
+│   │   │   ├── Timetable.Fragment.cs                           #    课程表片段操作
+│   │   │   └── Timetable.Period.cs                             #    课程表节次操作
 │   │   ├── Models/                                             #   领域模型
 │   │   │   ├── ErrorCode.cs                                    #    错误码枚举
 │   │   │   ├── OrdinalRange.cs                                 #    序数闭区间模型
 │   │   │   ├── Result.cs                                       #    结果类型层次结构
 │   │   │   └── Weekday.cs                                      #    星期枚举
 │   │   ├── ClassSchedule.Domain.csproj                         #   项目文件
+│   │   ├── DateOnlyExtensions.cs                               #   DateOnly 扩展成员
+│   │   ├── DayOfWeekExtensions.cs                              #   DayOfWeek 扩展成员
 │   │   └── EnumExtensions.cs                                   #   枚举扩展成员
 │   ├── ClassSchedule.Infrastructure/                           #  基础设施层
 │   │   ├── Services/                                           #   服务实现
@@ -145,10 +155,16 @@ ClassSchedule/
 ├── tests/                                                      # 测试项目目录
 │   ├── ClassSchedule.Domain.Tests/                             #  领域层单元测试
 │   │   ├── ClassSchedule.Domain.Tests.csproj                   #   测试项目文件
+│   │   ├── CourseTests.cs                                      #   课程实体单元测试
+│   │   ├── DateOnlyExtensionsTests.cs                          #   DateOnly 扩展单元测试
 │   │   ├── EnumExtensionsTests.cs                              #   枚举扩展单元测试
 │   │   ├── ErrorCodeTests.cs                                   #   错误码单元测试
 │   │   ├── OrdinalRangeTests.cs                                #   序数闭区间单元测试
-│   │   └── ResultTests.cs                                      #   结果类型单元测试
+│   │   ├── ResultTests.cs                                      #   结果类型单元测试
+│   │   ├── TimetableCourseTests.cs                             #   课程表课程操作单元测试
+│   │   ├── TimetableFragmentTests.cs                           #   课程表片段操作单元测试
+│   │   ├── TimetablePeriodTests.cs                             #   课程表节次操作单元测试
+│   │   └── TimetableTests.cs                                   #   课程表实体单元测试
 │   ├── ClassSchedule.Infrastructure.Tests/                     #  基础设施层单元测试
 │   │   ├── AssemblyInfo.cs                                     #   程序集级夹具与并行配置
 │   │   ├── ClassSchedule.Infrastructure.Tests.csproj           #   测试项目文件
