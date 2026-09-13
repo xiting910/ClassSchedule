@@ -3,6 +3,7 @@ using Avalonia.Styling;
 using ClassSchedule.Infrastructure;
 using ClassSchedule.UI.Shared.Models;
 using ClassSchedule.UI.Shared.ViewModels;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
@@ -21,7 +22,34 @@ public sealed partial class App : Application
     public static IServiceProvider Services
     {
         get => field ?? throw new InvalidOperationException($"{nameof(Services)} is not initialized.");
-        set;
+        private set;
+    }
+
+    /// <summary>
+    /// 创建服务容器, 由平台入口在启动时调用, 以便在应用程序启动前注册依赖注入服务
+    /// </summary>
+    /// <typeparam name="T">应用的核心壳视图的初始化器类型</typeparam>
+    /// <returns>创建的服务容器</returns>
+    public static ServiceProvider CreateServices<T>() where T : class, IShellInitializer
+    {
+        var configurationBuilder = new ConfigurationBuilder();
+        var config = configurationBuilder.AddJsonFilesFromSettings().Build();
+
+        var serviceCollection = new ServiceCollection()
+            .AddSingleton<IConfiguration>(config)
+            .AddLogging(builder => builder.AddFileLogger())
+            .AddInfrastructure()
+            .AddUIShared()
+            .AddSingleton<IShellInitializer, T>();
+
+        var provider = serviceCollection.BuildServiceProvider(new ServiceProviderOptions
+        {
+            ValidateScopes = true,
+            ValidateOnBuild = true
+        });
+
+        Services = provider;
+        return provider;
     }
 
     /// <inheritdoc/>

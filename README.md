@@ -180,7 +180,6 @@ ClassSchedule/
 │       ├── ApplicationLifetimeNotSupportedExceptionTests.cs    #   生命周期异常单元测试
 │       ├── AssemblyInfo.cs                                     #   程序集级夹具与并行配置
 │       ├── ClassSchedule.UI.Shared.Tests.csproj                #   测试项目文件
-│       ├── CompositionRootTests.cs                             #   组合根解析单元测试
 │       ├── FakeViewModel.cs                                    #   测试用视图模型
 │       ├── TestApplication.cs                                  #   测试用无界面应用
 │       ├── TestEnvironmentFixture.cs                           #   测试环境夹具

@@ -4,8 +4,6 @@ using Avalonia;
 using Avalonia.Android;
 using ClassSchedule.Infrastructure;
 using ClassSchedule.UI.Shared;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace ClassSchedule.UI.Android;
@@ -43,17 +41,7 @@ public class MainApplication : AvaloniaAndroidApplication<App>
             UnhandledExceptionHelper.HandleException(e.IsTerminating, ex);
         };
 
-        var configurationBuilder = new ConfigurationBuilder();
-        var config = configurationBuilder.AddJsonFilesFromSettings().Build();
-
-        App.Services = new ServiceCollection()
-            .AddSingleton<IConfiguration>(config)
-            .AddLogging(builder => builder.AddFileLogger())
-            .AddInfrastructure()
-            .AddUIShared()
-            .AddSingleton<IShellInitializer, ShellInitializer>()
-            .BuildServiceProvider();
-
+        _ = App.CreateServices<ShellInitializer>();
         return base.CustomizeAppBuilder(builder).WithInterFont().LogToTrace();
     }
 }

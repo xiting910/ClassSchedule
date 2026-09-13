@@ -52,10 +52,14 @@
 - 未处理异常日志移入应用数据目录, 目录不可用时回退到程序基目录
 - 为 UI 选项与文件日志选项添加结构化日志记录
 - 升级 Avalonia 至 12.1.2 并简化 Dependabot 分组配置
+- 服务容器装配收拢到 UI 共享层的 App.CreateServices, 平台入口只需传入各自的壳视图初始化器类型
+- 服务容器启用作用域与构建期校验 (ValidateScopes 与 ValidateOnBuild), 注册缺失或生命周期错配在启动时即失败
+- 依赖注入与日志包引用由桌面端、安卓端与 UI 共享层测试项目移入 UI 共享层, 由后者统一传递
 
 ### Removed
 - 移除 Domain 层的 DI 注册扩展 AddDomain 及其依赖注入抽象包引用, 使领域层保持零依赖
 - 移除桌面端、安卓端与 UI 共享层测试的组合根中对 AddDomain 的调用
+- 移除 UI 共享层测试的 CompositionRootTests 组合根解析测试类, 其校验职责已由 App.CreateServices 的构建期校验承担
 - 移除 WeekRange 周段模型, 由 OrdinalRange 取代, 使周次与节次共用同一个序数闭区间类型
 - 移除 WeekRangeTests 单元测试类, 由 OrdinalRangeTests 覆盖序数闭区间及其归一化
 

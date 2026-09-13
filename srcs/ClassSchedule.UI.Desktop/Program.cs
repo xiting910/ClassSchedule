@@ -1,8 +1,6 @@
 using Avalonia;
 using ClassSchedule.Infrastructure;
 using ClassSchedule.UI.Shared;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace ClassSchedule.UI.Desktop;
@@ -32,18 +30,7 @@ file static class Program
             UnhandledExceptionHelper.HandleException(e.IsTerminating, ex);
         };
 
-        var configurationBuilder = new ConfigurationBuilder();
-        var config = configurationBuilder.AddJsonFilesFromSettings().Build();
-
-        using var service = new ServiceCollection()
-            .AddSingleton<IConfiguration>(config)
-            .AddLogging(builder => builder.AddFileLogger())
-            .AddInfrastructure()
-            .AddUIShared()
-            .AddSingleton<IShellInitializer, ShellInitializer>()
-            .BuildServiceProvider();
-
-        App.Services = service;
+        using var serviceProvider = App.CreateServices<ShellInitializer>();
         return AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
