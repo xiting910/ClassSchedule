@@ -62,6 +62,7 @@
 - 移除 UI 共享层测试的 CompositionRootTests 组合根解析测试类, 其校验职责已由 App.CreateServices 的构建期校验承担
 - 移除 WeekRange 周段模型, 由 OrdinalRange 取代, 使周次与节次共用同一个序数闭区间类型
 - 移除 WeekRangeTests 单元测试类, 由 OrdinalRangeTests 覆盖序数闭区间及其归一化
+- 移除 Fragment.EnsureWeeksSorted, 周次集合改由 JSON 列持久化, 不再存在子表查询后的乱序场景
 
 ### Fixed
 - 修复文件日志丢失异常信息的问题, 异常文本现在会写入日志行

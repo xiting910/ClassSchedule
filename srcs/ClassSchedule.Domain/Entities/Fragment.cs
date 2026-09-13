@@ -49,14 +49,6 @@ public sealed class Fragment : IEquatable<Fragment>
     /// </summary>
     internal Fragment() { }
 
-    /// <summary>
-    /// 确保课程片段的周次列表已经排序, 由 EF Core 在物化时调用
-    /// </summary>
-    public void EnsureWeeksSorted()
-    {
-        _weeks.Sort((a, b) => a.Start.CompareTo(b.Start));
-    }
-
     /// <inheritdoc/>
     public bool Equals(Fragment? other)
     {
