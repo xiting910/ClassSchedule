@@ -10,6 +10,16 @@
 ## [Unreleased]
 
 ### Added
+- 添加 EF Core 持久化层, 由 AppDbContext 承载课程表聚合, 并按实体拆分配置类
+- 添加课程片段的节次区间到 JSON 单列的转换器
+- 添加课程片段的周次区间列表到 JSON 单列的转换器与比较器
+- 添加实体物化拦截器, 课程表实体取回后自动按序号升序排列课程节次定义
+- 添加 ITimetableRepository 课程表仓储接口与实现, 提供列表, 取回, 新增, 删除与保存
+- 添加 IDatabaseInitializer 数据库初始化器接口与实现, 启动时应用迁移
+- 添加 AppDbContext 的设计时工厂, 供 EF Core 命令行工具生成迁移
+- 添加 InitialCreate 首次建表迁移与模型快照
+- 添加 TimetableSummary 课表摘要模型, 供列表展示
+- 添加基础设施层持久化单元测试, 覆盖仓储增删改查、课程片段 JSON 列往返与实体物化拦截器
 - 支持 OrdinalRange 的 JSON 反序列化, 为周次集合的 JSON 列持久化做准备
 - 启用全局 TreatWarningsAsErrors, 所有编译器警告视为错误
 - 添加 WeekRange 周段模型与 Weekday 星期枚举领域模型, 周段支持包含与交集判断
@@ -46,6 +56,8 @@
 - 采用集中包管理 (CPM) 统一管理 NuGet 包版本
 
 ### Changed
+- AddInfrastructure 补齐持久化装配, 注册 AppDbContext、数据库初始化器与课程表仓储
+- 基础设施层测试改用真实 SQLite 数据库, 由测试夹具复用 AddInfrastructure 构建服务容器并初始化数据库
 - TimeProvider.System 的注册由 AddDomain 迁回 AddInfrastructure, Domain 层不再引用依赖注入抽象包
 - TimeProvider.System 的注册由 AddInfrastructure 迁移到 AddDomain
 - 文件写入不再静默吞异常, 改为显式处理并外抛 (SafeWriteToFile 更名为 WriteToFile)
@@ -58,6 +70,7 @@
 - 依赖注入与日志包引用由桌面端、安卓端与 UI 共享层测试项目移入 UI 共享层, 由后者统一传递
 
 ### Removed
+- 移除 Microsoft.EntityFrameworkCore.InMemory 包引用, 测试不再依赖内存数据库
 - 移除 Domain 层的 DI 注册扩展 AddDomain 及其依赖注入抽象包引用, 使领域层保持零依赖
 - 移除桌面端、安卓端与 UI 共享层测试的组合根中对 AddDomain 的调用
 - 移除 UI 共享层测试的 CompositionRootTests 组合根解析测试类, 其校验职责已由 App.CreateServices 的构建期校验承担

@@ -1,3 +1,7 @@
+using ClassSchedule.Infrastructure.Interfaces;
+using ClassSchedule.Infrastructure.Persistence;
+using ClassSchedule.Infrastructure.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -22,7 +26,10 @@ public static class IServiceCollectionExtensions
         {
             return services
                 .AddSingleton(TimeProvider.System)
-                .AddSingleton<FileLoggerOptions>();
+                .AddSingleton<FileLoggerOptions>()
+                .AddDbContext<AppDbContext>(options => options.UseSqlite(AppDbContext.ConnectionString))
+                .AddSingleton<IDatabaseInitializer, DatabaseInitializer>()
+                .AddScoped<ITimetableRepository, TimetableRepository>();
         }
     }
 }

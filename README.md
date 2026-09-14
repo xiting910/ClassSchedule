@@ -92,8 +92,28 @@ ClassSchedule/
 │   │   ├── DayOfWeekExtensions.cs                              #   DayOfWeek 扩展成员
 │   │   └── EnumExtensions.cs                                   #   枚举扩展成员
 │   ├── ClassSchedule.Infrastructure/                           #  基础设施层
+│   │   ├── Configurations/                                     #   EF Core 实体配置
+│   │   │   ├── CourseConfiguration.cs                          #    课程实体配置
+│   │   │   ├── FragmentConfiguration.cs                        #    课程片段实体配置
+│   │   │   ├── PeriodDefinitionConfiguration.cs                #    课程节次定义实体配置
+│   │   │   └── TimetableConfiguration.cs                       #    课程表实体配置
+│   │   ├── Interfaces/                                         #   抽象接口
+│   │   │   ├── IDatabaseInitializer.cs                         #    数据库初始化器接口
+│   │   │   └── ITimetableRepository.cs                         #    课程表仓储接口
+│   │   ├── Migrations/                                         #   EF Core 数据库迁移
+│   │   │   ├── 20260914075250_InitialCreate.cs                 #    首次建表迁移
+│   │   │   ├── 20260914075250_InitialCreate.Designer.cs        #    首次建表迁移元数据
+│   │   │   └── AppDbContextModelSnapshot.cs                    #    模型快照
+│   │   ├── Models/                                             #   基础设施层模型
+│   │   │   └── TimetableSummary.cs                             #    课表摘要模型
+│   │   ├── Persistence/                                        #   持久化
+│   │   │   ├── AppDbContext.cs                                 #    应用数据库上下文
+│   │   │   ├── AppDbContextDesignTimeFactory.cs                #    设计时上下文工厂
+│   │   │   └── MaterializationInterceptor.cs                   #    实体物化拦截器
 │   │   ├── Services/                                           #   服务实现
-│   │   │   └── FileLoggerProvider.cs                           #    文件日志提供器
+│   │   │   ├── DatabaseInitializer.cs                          #    数据库初始化器
+│   │   │   ├── FileLoggerProvider.cs                           #    文件日志提供器
+│   │   │   └── TimetableRepository.cs                          #    课程表仓储实现
 │   │   ├── ClassSchedule.Infrastructure.csproj                 #   项目文件
 │   │   ├── FileLoggerOptions.cs                                #   文件日志选项
 │   │   ├── FileSystem.cs                                       #   文件系统路径与文件读写
@@ -172,9 +192,14 @@ ClassSchedule/
 │   │   ├── FileLoggerOptionsTests.cs                           #   文件日志选项单元测试
 │   │   ├── FileLoggerProviderTests.cs                          #   文件日志提供器单元测试
 │   │   ├── FileSystemTests.cs                                  #   文件系统单元测试
+│   │   ├── FragmentJsonColumnTests.cs                          #   课程片段 JSON 列持久化单元测试
+│   │   ├── MaterializationInterceptorTests.cs                  #   实体物化拦截器单元测试
 │   │   ├── StringExtensionsTests.cs                            #   string 扩展单元测试
 │   │   ├── TestConfigurationFactory.cs                         #   测试配置工厂
 │   │   ├── TestEnvironmentFixture.cs                           #   测试环境夹具
+│   │   ├── TimetableRepositoryPersistenceTests.cs              #   课程表聚合落盘单元测试
+│   │   ├── TimetableRepositoryTestHelper.cs                    #   仓储测试共享辅助方法
+│   │   ├── TimetableRepositoryTests.cs                         #   课程表仓储单元测试
 │   │   └── UnhandledExceptionHelperTests.cs                    #   未处理异常辅助单元测试
 │   └── ClassSchedule.UI.Shared.Tests/                          #  UI 共享层单元测试
 │       ├── ApplicationLifetimeNotSupportedExceptionTests.cs    #   生命周期异常单元测试
