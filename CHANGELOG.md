@@ -10,6 +10,8 @@
 ## [Unreleased]
 
 ### Added
+- 添加 Timetable.ChangeAllPeriodDurations, 保持各节次定义的开始时间不变并统一持续时间, 放不下时不做任何修改
+- 添加 Timetable.ChangeAllPeriodDurations 的领域层单元测试
 - 添加 Timetable.ChangeFragmentWeeks 的领域层单元测试, 覆盖更改后的周次超出总周数返回 WeekNotFound 且不修改原有周次
 - 添加 EF Core 持久化层, 由 AppDbContext 承载课程表聚合, 并按实体拆分配置类
 - 添加课程片段的节次区间到 JSON 单列的转换器

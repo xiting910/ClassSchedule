@@ -303,4 +303,122 @@ public sealed class TimetablePeriodTests
         var failure = Assert.IsType<FailureResult>(result);
         Assert.Equal(ErrorCode.PeriodNotFound, failure.Code);
     }
+
+    /// <summary>
+    /// 验证 <see cref="Timetable.ChangeAllPeriodDurations"/> 在时长可容纳时统一所有节次定义的持续时间,
+    /// 且开始时间与序号保持不变
+    /// </summary>
+    [Fact]
+    public void ChangeAllPeriodDurations_FitsWithinGaps_ShouldUnifyDurationsAndKeepStartTimes()
+    {
+        var timetable = CreateTimetable();
+        _ = Assert.IsType<SuccessResult>(timetable.AddPeriodDefinitions(
+            (new(8, 0), new(8, 15)),
+            (new(9, 0), new(9, 30)),
+            (new(10, 0), new(10, 45))
+        ));
+
+        var result = timetable.ChangeAllPeriodDurations(TimeSpan.FromMinutes(45));
+
+        _ = Assert.IsType<SuccessResult>(result);
+        Assert.Equal(3, timetable.PeriodDefinitions.Count);
+        Assert.Equal(new(8, 0), timetable.PeriodDefinitions[0].StartTime);
+        Assert.Equal(new(8, 45), timetable.PeriodDefinitions[0].EndTime);
+        Assert.Equal(1, timetable.PeriodDefinitions[0].Ordinal);
+        Assert.Equal(new(9, 0), timetable.PeriodDefinitions[1].StartTime);
+        Assert.Equal(new(9, 45), timetable.PeriodDefinitions[1].EndTime);
+        Assert.Equal(2, timetable.PeriodDefinitions[1].Ordinal);
+        Assert.Equal(new(10, 0), timetable.PeriodDefinitions[2].StartTime);
+        Assert.Equal(new(10, 45), timetable.PeriodDefinitions[2].EndTime);
+        Assert.Equal(3, timetable.PeriodDefinitions[2].Ordinal);
+        Assert.All(timetable.PeriodDefinitions, p => Assert.Equal(TimeSpan.FromMinutes(45), p.Duration));
+    }
+
+    /// <summary>
+    /// 验证 <see cref="Timetable.ChangeAllPeriodDurations"/> 在时长刚好让所有节次定义紧贴时统一所有持续时间,
+    /// 且开始时间与序号保持不变
+    /// </summary>
+    [Fact]
+    public void ChangeAllPeriodDurations_FitsExactly_ShouldUnifyDurationsAndKeepStartTimes()
+    {
+        var timetable = CreateTimetable();
+        _ = Assert.IsType<SuccessResult>(timetable.AddPeriodDefinitions(
+            (new(8, 0), new(8, 45)),
+            (new(9, 0), new(9, 45)),
+            (new(10, 0), new(10, 45))
+        ));
+
+        var result = timetable.ChangeAllPeriodDurations(TimeSpan.FromMinutes(60));
+
+        _ = Assert.IsType<SuccessResult>(result);
+        Assert.Equal(3, timetable.PeriodDefinitions.Count);
+        Assert.Equal(new(8, 0), timetable.PeriodDefinitions[0].StartTime);
+        Assert.Equal(new(9, 0), timetable.PeriodDefinitions[0].EndTime);
+        Assert.Equal(1, timetable.PeriodDefinitions[0].Ordinal);
+        Assert.Equal(new(9, 0), timetable.PeriodDefinitions[1].StartTime);
+        Assert.Equal(new(10, 0), timetable.PeriodDefinitions[1].EndTime);
+        Assert.Equal(2, timetable.PeriodDefinitions[1].Ordinal);
+        Assert.Equal(new(10, 0), timetable.PeriodDefinitions[2].StartTime);
+        Assert.Equal(new(11, 0), timetable.PeriodDefinitions[2].EndTime);
+        Assert.Equal(3, timetable.PeriodDefinitions[2].Ordinal);
+        Assert.All(timetable.PeriodDefinitions, p => Assert.Equal(TimeSpan.FromMinutes(60), p.Duration));
+    }
+
+    /// <summary>
+    /// 验证 <see cref="Timetable.ChangeAllPeriodDurations"/> 在某个节次定义按新持续时间重算后与下一个冲突时,
+    /// 返回 <see cref="ErrorCode.PeriodOverlap"/> 且不修改任何节次定义
+    /// </summary>
+    [Fact]
+    public void ChangeAllPeriodDurations_OverlapsNextPeriod_ShouldReturnFailureWithoutChangingAnyPeriod()
+    {
+        var timetable = CreateTimetable();
+        _ = Assert.IsType<SuccessResult>(timetable.AddPeriodDefinitions(
+            (new(8, 0), new(8, 45)),
+            (new(9, 0), new(9, 45)),
+            (new(10, 0), new(10, 45))
+        ));
+
+        var result = timetable.ChangeAllPeriodDurations(TimeSpan.FromMinutes(90));
+
+        var failure = Assert.IsType<FailureResult>(result);
+        Assert.Equal(ErrorCode.PeriodOverlap, failure.Code);
+        Assert.Equal(new(8, 45), timetable.PeriodDefinitions[0].EndTime);
+        Assert.Equal(new(9, 45), timetable.PeriodDefinitions[1].EndTime);
+        Assert.Equal(new(10, 45), timetable.PeriodDefinitions[2].EndTime);
+        Assert.All(timetable.PeriodDefinitions, p => Assert.Equal(TimeSpan.FromMinutes(45), p.Duration));
+    }
+
+    /// <summary>
+    /// 验证 <see cref="Timetable.ChangeAllPeriodDurations"/> 在重算后的结束时间超过一天的末尾时返回
+    /// <see cref="ErrorCode.PeriodDurationExceedLimit"/> 且不修改任何节次定义
+    /// </summary>
+    [Fact]
+    public void ChangeAllPeriodDurations_EndTimeWrapsPastMidnight_ShouldReturnFailure()
+    {
+        var timetable = CreateTimetable();
+        _ = Assert.IsType<SuccessResult>(timetable.AddPeriodDefinitions((new(22, 0), new(22, 30))));
+
+        var result = timetable.ChangeAllPeriodDurations(TimeSpan.FromHours(3));
+
+        var failure = Assert.IsType<FailureResult>(result);
+        Assert.Equal(ErrorCode.PeriodDurationExceedLimit, failure.Code);
+        Assert.Equal(new(22, 30), timetable.PeriodDefinitions[0].EndTime);
+    }
+
+    /// <summary>
+    /// 验证 <see cref="Timetable.ChangeAllPeriodDurations"/> 在传入的持续时间小于等于零时抛出
+    /// <see cref="ArgumentOutOfRangeException"/>
+    /// </summary>
+    /// <param name="minutes">持续时间的分钟数</param>
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void ChangeAllPeriodDurations_DurationNotPositive_ShouldThrowArgumentOutOfRangeException(int minutes)
+    {
+        var timetable = CreateTimetable();
+
+        _ = Assert.Throws<ArgumentOutOfRangeException>(
+            () => timetable.ChangeAllPeriodDurations(TimeSpan.FromMinutes(minutes))
+        );
+    }
 }

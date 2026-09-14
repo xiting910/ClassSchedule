@@ -74,6 +74,12 @@ public enum ErrorCode
     PeriodOverlap,
 
     /// <summary>
+    /// 课程节次时间超出一天的范围
+    /// </summary>
+    [Description("课程节次时间超出一天的范围")]
+    PeriodDurationExceedLimit,
+
+    /// <summary>
     /// 课程节次未找到
     /// </summary>
     [Description("课程节次未找到")]

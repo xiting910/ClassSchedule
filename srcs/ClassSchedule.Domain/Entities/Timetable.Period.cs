@@ -235,4 +235,48 @@ partial class Timetable
         _periodDefinitions[index].EndTime = endTime;
         return Result.Success();
     }
+
+    /// <summary>
+    /// 将所有课程节次定义的开始时间保持不变, 统一将持续时间更改为指定值
+    /// </summary>
+    /// <param name="duration">统一后的持续时间</param>
+    /// <returns>操作结果</returns>
+    /// <exception cref="ArgumentOutOfRangeException">参数不满足约束时抛出</exception>
+    public Result ChangeAllPeriodDurations(TimeSpan duration)
+    {
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(duration, TimeSpan.Zero, nameof(duration));
+
+        if (_periodDefinitions.Count == 0)
+        {
+            return Result.Success();
+        }
+
+        var newEndTimes = new TimeOnly[_periodDefinitions.Count];
+        newEndTimes[^1] = _periodDefinitions[^1].StartTime.Add(duration, out var wrappedDays);
+        if (wrappedDays > 0)
+        {
+            return Result.Failure(
+                ErrorCode.PeriodDurationExceedLimit,
+                $"要更改的课程节次持续时间 {duration} 会导致最后一个课程节次定义的结束时间超出一天的范围"
+            );
+        }
+
+        for (var i = 0; i < _periodDefinitions.Count - 1; i++)
+        {
+            newEndTimes[i] = _periodDefinitions[i].StartTime.Add(duration);
+            if (newEndTimes[i] > _periodDefinitions[i + 1].StartTime)
+            {
+                return Result.Failure(
+                    ErrorCode.PeriodOverlap,
+                    $"要更改的课程节次持续时间 {duration} 会导致课程节次定义 {i + 1} 的新结束时间 {newEndTimes[i]} 超过后一个课程节次定义的开始时间 {_periodDefinitions[i + 1].StartTime}"
+                );
+            }
+        }
+
+        for (var i = 0; i < _periodDefinitions.Count; i++)
+        {
+            _periodDefinitions[i].EndTime = newEndTimes[i];
+        }
+        return Result.Success();
+    }
 }
