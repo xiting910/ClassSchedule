@@ -14,7 +14,14 @@ internal sealed class ShellInitializer(ShellViewModel viewModel) : IShellInitial
     /// <inheritdoc/>
     public void Initialize(IApplicationLifetime? lifetime)
     {
-        if (lifetime is ISingleViewApplicationLifetime singleViewLifetime)
+        if (lifetime is IActivityApplicationLifetime activityLifetime)
+        {
+            activityLifetime.MainViewFactory = () => new ShellView
+            {
+                DataContext = viewModel
+            };
+        }
+        else if (lifetime is ISingleViewApplicationLifetime singleViewLifetime)
         {
             singleViewLifetime.MainView = new ShellView
             {

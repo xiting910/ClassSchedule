@@ -5,14 +5,14 @@
              xmlns:models="using:ClassSchedule.UI.Shared.Models"
              x:DataType="vm:ToastViewModel"
              IsVisible="{Binding HasItems}"
-             HorizontalAlignment="Right" VerticalAlignment="Bottom"
-             Margin="0,0,16,16">
+             HorizontalAlignment="Center" VerticalAlignment="Top"
+             Margin="0,16,0,0">
 
-  <!-- 多条提示纵向堆叠, 最新条目在下方, 每条独立计时与悬停暂停 -->
+  <!-- 多条提示纵向堆叠, 最新条目在上方, 每条独立计时 -->
   <ItemsControl ItemsSource="{Binding Items}">
     <ItemsControl.ItemsPanel>
       <ItemsPanelTemplate>
-        <StackPanel Spacing="8" HorizontalAlignment="Right"/>
+        <StackPanel Spacing="8" HorizontalAlignment="Center"/>
       </ItemsPanelTemplate>
     </ItemsControl.ItemsPanel>
     <ItemsControl.ItemTemplate>
@@ -22,11 +22,9 @@
                 BoxShadow="0 4 12 0 #33000000"
                 Opacity="{Binding EnterOpacity}"
                 Cursor="Hand"
-                PointerEntered="OnToastPointerEntered"
-                PointerExited="OnToastPointerExited"
                 Tapped="OnToastTapped">
 
-          <!-- 入场动画: 透明度从 0 淡入, 位移从下方 16px 滑入, 由视图模型在加入后下一帧触发 -->
+          <!-- 入场动画: 透明度从 0 淡入, 位移从上方 16px 滑入, 由视图模型在加入后下一帧触发 -->
           <Border.Transitions>
             <Transitions>
               <DoubleTransition Property="Opacity" Duration="0:0:0.15"/>
@@ -45,7 +43,7 @@
           <StackPanel Spacing="6">
             <TextBlock Text="{Binding Message}" Foreground="White" FontSize="13" TextWrapping="Wrap" />
 
-            <!-- 剩余时间进度条: 前景条按剩余比例从满宽缩至零, 线性过渡补间保证平滑缩短, 鼠标悬停时倒计时暂停 -->
+            <!-- 剩余时间进度条: 前景条按剩余比例从满宽缩至零, 线性过渡补间保证平滑缩短 -->
             <Border Height="3" CornerRadius="1.5" Background="#33FFFFFF">
               <Border CornerRadius="1.5" Background="{DynamicResource ToastProgressBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Border.RenderTransform>

@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Styling;
 using ClassSchedule.Infrastructure;
+using ClassSchedule.Infrastructure.Interfaces;
 using ClassSchedule.UI.Shared.Models;
 using ClassSchedule.UI.Shared.ViewModels;
 using Microsoft.Extensions.Configuration;
@@ -48,6 +49,7 @@ public sealed partial class App : Application
             ValidateOnBuild = true
         });
 
+        provider.GetRequiredService<IDatabaseInitializer>().Initialize();
         Services = provider;
         return provider;
     }

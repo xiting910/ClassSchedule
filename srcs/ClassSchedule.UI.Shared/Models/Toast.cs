@@ -4,7 +4,7 @@ using System;
 namespace ClassSchedule.UI.Shared.Models;
 
 /// <summary>
-/// 提示条目类, 用于在右下角显示短暂提示
+/// 提示条目类, 用于显示短暂提示
 /// </summary>
 /// <param name="message">提示文本</param>
 /// <param name="duration">显示时长</param>
@@ -25,7 +25,7 @@ public sealed partial class Toast(
     /// 入场位移偏移
     /// </summary>
     [ObservableProperty]
-    public partial double EnterOffset { get; set; } = 16.0;
+    public partial double EnterOffset { get; set; } = -16.0;
 
     /// <summary>
     /// 入场透明度
@@ -34,16 +34,10 @@ public sealed partial class Toast(
     public partial double EnterOpacity { get; set; }
 
     /// <summary>
-    /// 剩余显示时间比例, 驱动底部进度条从满宽缩至零
+    /// 剩余显示时间比例, 驱动进度条从满宽缩至零
     /// </summary>
     [ObservableProperty]
     public partial double Progress { get; set; } = Constants.MaxRatio;
-
-    /// <summary>
-    /// 是否暂停倒计时
-    /// </summary>
-    [ObservableProperty]
-    public partial bool IsPaused { get; set; }
 
     /// <summary>
     /// 总显示时长, 用于计算剩余时间比例
@@ -67,11 +61,8 @@ public sealed partial class Toast(
     /// <returns><see langword="true"/> 如果剩余时间耗尽, 否则 <see langword="false"/></returns>
     public bool Tick(TimeSpan delta)
     {
-        if (!IsPaused)
-        {
-            _remaining -= delta;
-            Progress = Math.Clamp(_remaining / _totalDuration, 0, Constants.MaxRatio);
-        }
+        _remaining -= delta;
+        Progress = Math.Clamp(_remaining / _totalDuration, 0, Constants.MaxRatio);
         return _remaining <= TimeSpan.Zero;
     }
 

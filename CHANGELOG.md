@@ -59,6 +59,9 @@
 - 采用集中包管理 (CPM) 统一管理 NuGet 包版本
 
 ### Changed
+- Toast 提示适配安卓端: 显示位置由右下角改为顶部居中, 入场动画改为从上方滑入
+- 安卓端壳视图优先通过 IActivityApplicationLifetime.MainViewFactory 创建, 兼顾单视图生命周期
+- 应用启动时在组合根内应用数据库迁移, 由 IDatabaseInitializer 在服务容器返回前完成初始化
 - AddInfrastructure 补齐持久化装配, 注册 AppDbContext、数据库初始化器与课程表仓储
 - 基础设施层测试改用真实 SQLite 数据库, 由测试夹具复用 AddInfrastructure 构建服务容器并初始化数据库
 - TimeProvider.System 的注册由 AddDomain 迁回 AddInfrastructure, Domain 层不再引用依赖注入抽象包
@@ -80,6 +83,7 @@
 - 移除 WeekRange 周段模型, 由 OrdinalRange 取代, 使周次与节次共用同一个序数闭区间类型
 - 移除 WeekRangeTests 单元测试类, 由 OrdinalRangeTests 覆盖序数闭区间及其归一化
 - 移除 Fragment.EnsureWeeksSorted, 周次集合改由 JSON 列持久化, 不再存在子表查询后的乱序场景
+- 移除 Toast 悬停暂停倒计时, 为安卓端适配, 一并移除 IsPaused 属性、指针进出事件处理器及其单元测试
 
 ### Fixed
 - 修复文件日志丢失异常信息的问题, 异常文本现在会写入日志行

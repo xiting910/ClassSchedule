@@ -100,8 +100,8 @@ public sealed class ToastViewModelTests
             viewModel.Show("third");
 
             Assert.Equal(2, viewModel.Items.Count);
-            Assert.Equal("second", viewModel.Items[0].Message);
-            Assert.Equal("third", viewModel.Items[1].Message);
+            Assert.Equal("third", viewModel.Items[0].Message);
+            Assert.Equal("second", viewModel.Items[1].Message);
 
             viewModel.Items.Clear();
         }, TestContext.Current.CancellationToken);

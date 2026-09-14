@@ -10,7 +10,7 @@ using System.Diagnostics;
 namespace ClassSchedule.UI.Shared.ViewModels;
 
 /// <summary>
-/// 提示条目视图模型, 用于在右下角显示短暂提示
+/// 提示条目视图模型, 用于显示短暂提示
 /// </summary>
 public sealed partial class ToastViewModel : ObservableObject
 {
@@ -86,12 +86,12 @@ public sealed partial class ToastViewModel : ObservableObject
         // 满员时顶掉最早的一条, 直到为新提示腾出位置
         while (Items.Count >= maxCount)
         {
-            Items.RemoveAt(0);
+            Items.RemoveAt(Items.Count - 1);
         }
 
         // 创建并加入新条目
         var item = new Toast(message, duration, clickAction);
-        Items.Add(item);
+        Items.Insert(0, item);
 
         // 下一帧触发入场动画, 确保起始状态先完成布局渲染再补间
         Dispatcher.UIThread.Post(() =>
