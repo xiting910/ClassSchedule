@@ -495,6 +495,24 @@ public sealed class TimetableFragmentTests
     }
 
     /// <summary>
+    /// 验证 <see cref="Timetable.ChangeFragmentWeeks"/> 在上课周次超出总周数时返回
+    /// <see cref="ErrorCode.WeekNotFound"/>, 且不修改原有周次
+    /// </summary>
+    [Fact]
+    public void ChangeFragmentWeeks_WeeksExceedTotalWeeks_ShouldReturnFailure()
+    {
+        var timetable = CreateTimetable(16);
+        var courseId = AddCourse(timetable);
+        var fragment = AddSampleFragment(timetable, courseId, Weekday.Tuesday, new(1, 2), [new(1, 16)]);
+
+        var result = timetable.ChangeFragmentWeeks(courseId, fragment.Id, [new(1, 20)]);
+
+        var failure = Assert.IsType<FailureResult>(result);
+        Assert.Equal(ErrorCode.WeekNotFound, failure.Code);
+        Assert.Equal(new(1, 16), Assert.Single(fragment.Weeks));
+    }
+
+    /// <summary>
     /// 验证 <see cref="Timetable.ChangeFragmentWeeks"/> 在改后的周次只与课程片段自身重叠时成功,
     /// 即判定重叠时排除了课程片段自身
     /// </summary>
