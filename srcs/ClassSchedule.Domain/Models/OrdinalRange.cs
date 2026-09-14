@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace ClassSchedule.Domain.Models;
 
@@ -24,6 +25,7 @@ public readonly record struct OrdinalRange
     /// <param name="start">起始序数, 必须为正整数</param>
     /// <param name="end">结束序数, 必须不小于起始序数</param>
     /// <exception cref="ArgumentOutOfRangeException">参数不满足约束时抛出</exception>
+    [JsonConstructor]
     public OrdinalRange(int start, int end)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(start, nameof(start));

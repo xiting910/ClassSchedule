@@ -10,6 +10,7 @@
 ## [Unreleased]
 
 ### Added
+- 支持 OrdinalRange 的 JSON 反序列化, 为周次集合的 JSON 列持久化做准备
 - 启用全局 TreatWarningsAsErrors, 所有编译器警告视为错误
 - 添加 WeekRange 周段模型与 Weekday 星期枚举领域模型, 周段支持包含与交集判断
 - 添加 OrdinalRange 序数闭区间模型, 支持包含与交集判断, 并支持区间列表排序、相邻合并与重叠判定的归一化
