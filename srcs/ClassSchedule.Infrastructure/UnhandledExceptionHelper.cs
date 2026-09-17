@@ -60,7 +60,7 @@ public static class UnhandledExceptionHelper
         if (File.Exists(UnhandledExceptionLogFilePath))
         {
             await using var fileStream = UnhandledExceptionLogFilePath.OpenRead();
-            await fileStream.CopyToAsync(stream, cancellationToken);
+            await fileStream.CopyToAsync(stream, cancellationToken).ConfigureAwait(false);
         }
     }
 

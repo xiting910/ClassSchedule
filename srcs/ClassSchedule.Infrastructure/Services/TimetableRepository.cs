@@ -31,7 +31,8 @@ internal sealed partial class TimetableRepository(
             .OrderBy(t => t.FirstMonday)
             .ThenBy(t => t.Name)
             .Select(t => new TimetableSummary(t.Id, t.Name, t.FirstMonday, t.TotalWeeks))
-            .ToListAsync(token);
+            .ToListAsync(token)
+            .ConfigureAwait(false);
 
         LogListed(summaries.Count);
         return summaries;
@@ -40,7 +41,7 @@ internal sealed partial class TimetableRepository(
     /// <inheritdoc/>
     public async Task<Result> GetAsync(Guid timetableId, CancellationToken token = default)
     {
-        var timetable = await _dbContext.Timetables.FindAsync([timetableId], token);
+        var timetable = await _dbContext.Timetables.FindAsync([timetableId], token).ConfigureAwait(false);
         if (timetable is null)
         {
             LogNotFound(timetableId);
@@ -53,7 +54,7 @@ internal sealed partial class TimetableRepository(
     /// <inheritdoc/>
     public async Task<Result> DeleteAsync(Guid timetableId, CancellationToken token = default)
     {
-        var timetable = await _dbContext.Timetables.FindAsync([timetableId], token);
+        var timetable = await _dbContext.Timetables.FindAsync([timetableId], token).ConfigureAwait(false);
         if (timetable is null)
         {
             LogNotFound(timetableId);
@@ -61,7 +62,7 @@ internal sealed partial class TimetableRepository(
         }
 
         _ = _dbContext.Timetables.Remove(timetable);
-        var affectedRows = await _dbContext.SaveChangesAsync(token);
+        var affectedRows = await _dbContext.SaveChangesAsync(token).ConfigureAwait(false);
 
         LogDeleted(timetableId, affectedRows);
         return Result.Success();
@@ -70,8 +71,8 @@ internal sealed partial class TimetableRepository(
     /// <inheritdoc/>
     public async Task AddAsync(Timetable timetable, CancellationToken token = default)
     {
-        _ = await _dbContext.Timetables.AddAsync(timetable, token);
-        var affectedRows = await _dbContext.SaveChangesAsync(token);
+        _ = await _dbContext.Timetables.AddAsync(timetable, token).ConfigureAwait(false);
+        var affectedRows = await _dbContext.SaveChangesAsync(token).ConfigureAwait(false);
 
         LogAdded(timetable.Id, timetable.Name, affectedRows);
     }
@@ -79,7 +80,7 @@ internal sealed partial class TimetableRepository(
     /// <inheritdoc/>
     public async Task SaveAsync(CancellationToken token = default)
     {
-        var affectedRows = await _dbContext.SaveChangesAsync(token);
+        var affectedRows = await _dbContext.SaveChangesAsync(token).ConfigureAwait(false);
         LogSaved(affectedRows);
     }
 

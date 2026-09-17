@@ -143,7 +143,7 @@ public static class FileSystem
             {
                 await using var entryStream = zipArchive.CreateEntry(logFile.Name).Open();
                 await using var logFileStream = logFile.FullName.OpenRead();
-                await logFileStream.CopyToAsync(entryStream, cancellationToken);
+                await logFileStream.CopyToAsync(entryStream, cancellationToken).ConfigureAwait(false);
             }
         }
     }
