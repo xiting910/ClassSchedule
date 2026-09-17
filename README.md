@@ -71,6 +71,8 @@ ClassSchedule/
 │   │   └── release-publish.yml                                 #   Release 发布
 │   ├── dependabot.yml                                          #  Dependabot 依赖更新
 │   └── PULL_REQUEST_TEMPLATE.md                                #  PR 描述模板
+├── .vscode/                                                    # VS Code 配置
+│   └── settings.json                                           #  编辑器设置, 指定默认解决方案
 ├── srcs/                                                       # 源码目录
 │   ├── ClassSchedule.Domain/                                   #  领域层
 │   │   ├── Entities/                                           #   领域实体

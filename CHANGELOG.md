@@ -10,6 +10,8 @@
 ## [Unreleased]
 
 ### Added
+- 添加 UI 选项 CurrentTimetableId 与 ShowWeekends, 分别记录当前课程表 ID 与是否显示周末, 并随设置文件持久化
+- 添加 VS Code 工作区设置, 指定 C# Dev Kit 默认加载的解决方案文件
 - 添加 Timetable.ChangeAllPeriodDurations, 保持各节次定义的开始时间不变并统一持续时间, 放不下时不做任何修改
 - 添加 Timetable.ChangeAllPeriodDurations 的领域层单元测试
 - 添加 Timetable.ChangeFragmentWeeks 的领域层单元测试, 覆盖更改后的周次超出总周数返回 WeekNotFound 且不修改原有周次

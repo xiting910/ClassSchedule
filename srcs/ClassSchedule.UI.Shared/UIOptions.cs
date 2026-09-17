@@ -84,6 +84,50 @@ public sealed partial class UIOptions
     }
 
     /// <summary>
+    /// 当前课程表 ID 字段
+    /// </summary>
+    private Guid? _currentTimetableId;
+
+    /// <summary>
+    /// 当前课程表 ID
+    /// </summary>
+    public Guid? CurrentTimetableId
+    {
+        get => _currentTimetableId;
+        set
+        {
+            if (_currentTimetableId != value)
+            {
+                LogCurrentTimetableIdChanged(_currentTimetableId, value);
+                _currentTimetableId = value;
+                SaveToFile();
+            }
+        }
+    }
+
+    /// <summary>
+    /// 是否显示周末字段
+    /// </summary>
+    private bool _showWeekends;
+
+    /// <summary>
+    /// 是否显示周末
+    /// </summary>
+    public bool ShowWeekends
+    {
+        get => _showWeekends;
+        set
+        {
+            if (_showWeekends != value)
+            {
+                LogShowWeekendsChanged(_showWeekends, value);
+                _showWeekends = value;
+                SaveToFile();
+            }
+        }
+    }
+
+    /// <summary>
     /// 构造函数, 注入日志记录器和配置对象, 并从配置中读取选项
     /// </summary>
     /// <param name="logger">日志记录器</param>
@@ -106,6 +150,12 @@ public sealed partial class UIOptions
             ? Math.Clamp(seconds, 0.0, MaxToastDurationSeconds)
             : DefaultToastDurationSeconds;
 
+        _currentTimetableId = Guid.TryParse(section[nameof(CurrentTimetableId)], out var currentTimetableId)
+            ? currentTimetableId
+            : null;
+
+        _showWeekends = bool.TryParse(section[nameof(ShowWeekends)], out var showWeekends) && showWeekends;
+
         LogInitialized(_theme, _maxToastCount, _toastDurationSeconds);
     }
 
@@ -121,7 +171,9 @@ public sealed partial class UIOptions
             {
                 [nameof(Theme)] = _theme.ToString(),
                 [nameof(MaxToastCount)] = _maxToastCount,
-                [nameof(ToastDurationSeconds)] = _toastDurationSeconds
+                [nameof(ToastDurationSeconds)] = _toastDurationSeconds,
+                [nameof(CurrentTimetableId)] = _currentTimetableId?.ToString() ?? string.Empty,
+                [nameof(ShowWeekends)] = _showWeekends
             }
         }.ToJsonString(FileSystem.JsonSerializerOptions);
 
@@ -211,4 +263,30 @@ public sealed partial class UIOptions
         Message = "ToastDurationSeconds changed from {PreviousValue} to {NewValue}"
     )]
     private partial void LogToastDurationSecondsChanged(double previousValue, double newValue);
+
+    /// <summary>
+    /// 记录当前课程表 ID 更改的日志
+    /// </summary>
+    /// <param name="previousValue">更改前的值</param>
+    /// <param name="newValue">更改后的值</param>
+    [LoggerMessage(
+        EventId = 7,
+        EventName = "CurrentTimetableIdChanged",
+        Level = LogLevel.Information,
+        Message = "CurrentTimetableId changed from {PreviousValue} to {NewValue}"
+    )]
+    private partial void LogCurrentTimetableIdChanged(Guid? previousValue, Guid? newValue);
+
+    /// <summary>
+    /// 记录是否显示周末更改的日志
+    /// </summary>
+    /// <param name="previousValue">更改前的值</param>
+    /// <param name="newValue">更改后的值</param>
+    [LoggerMessage(
+        EventId = 8,
+        EventName = "ShowWeekendsChanged",
+        Level = LogLevel.Information,
+        Message = "ShowWeekends changed from {PreviousValue} to {NewValue}"
+    )]
+    private partial void LogShowWeekendsChanged(bool previousValue, bool newValue);
 }
