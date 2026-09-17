@@ -61,6 +61,7 @@
 - 采用集中包管理 (CPM) 统一管理 NuGet 包版本
 
 ### Changed
+- 统一源文件编码为 UTF-8 无 BOM, 并统一 MainActivity 的 Activity 特性参数顺序
 - Toast 提示适配安卓端: 显示位置由右下角改为顶部居中, 入场动画改为从上方滑入
 - 安卓端壳视图优先通过 IActivityApplicationLifetime.MainViewFactory 创建, 兼顾单视图生命周期
 - 应用启动时在组合根内应用数据库迁移, 由 IDatabaseInitializer 在服务容器返回前完成初始化

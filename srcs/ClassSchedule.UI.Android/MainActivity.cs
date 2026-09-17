@@ -1,4 +1,4 @@
-﻿using Android.App;
+using Android.App;
 using Android.Content.PM;
 using Avalonia.Android;
 
@@ -8,10 +8,10 @@ namespace ClassSchedule.UI.Android;
 /// 主活动类
 /// </summary>
 [Activity(
-    Label = nameof(ClassSchedule),
-    Theme = "@style/MyTheme.NoActionBar",
+    ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode,
     Icon = "@drawable/icon",
+    Label = nameof(ClassSchedule),
     MainLauncher = true,
-    ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode
+    Theme = "@style/MyTheme.NoActionBar"
 )]
 public class MainActivity : AvaloniaMainActivity;
