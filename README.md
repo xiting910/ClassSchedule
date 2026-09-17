@@ -168,6 +168,7 @@ ClassSchedule/
 │       │   ├── ThemeMode.cs                                    #    主题模式枚举
 │       │   └── Toast.cs                                        #    Toast 提示条目
 │       ├── ViewModels/                                         #   视图模型
+│       │   ├── IPageViewModel.cs                               #   可推入导航栈的页面视图模型接口
 │       │   ├── ShellViewModel.cs                               #   壳视图模型
 │       │   └── ToastViewModel.cs                               #   Toast 提示视图模型
 │       ├── Views/                                              #   视图
@@ -207,7 +208,8 @@ ClassSchedule/
 │       ├── ApplicationLifetimeNotSupportedExceptionTests.cs    #   生命周期异常单元测试
 │       ├── AssemblyInfo.cs                                     #   程序集级夹具与并行配置
 │       ├── ClassSchedule.UI.Shared.Tests.csproj                #   测试项目文件
-│       ├── FakeViewModel.cs                                    #   测试用视图模型
+│       ├── FakePageViewModel.cs                                #   测试用页面视图模型
+│       ├── ShellViewModelTests.cs                              #   壳视图模型单元测试
 │       ├── TestApplication.cs                                  #   测试用无界面应用
 │       ├── TestEnvironmentFixture.cs                           #   测试环境夹具
 │       ├── ToastTests.cs                                       #   Toast 模型单元测试

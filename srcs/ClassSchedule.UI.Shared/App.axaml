@@ -14,8 +14,12 @@
 
   <Application.Resources>
     <ResourceDictionary>
-      <ResourceDictionary.ThemeDictionaries>
+      <!-- 卡片相关 -->
+      <CornerRadius x:Key="CardCornerRadius">6</CornerRadius>
+      <Thickness x:Key="CardPadding">12,8</Thickness>
 
+      <!-- 主题字典 -->
+      <ResourceDictionary.ThemeDictionaries>
         <!-- 浅色主题 -->
         <ResourceDictionary x:Key="Light">
           <SolidColorBrush x:Key="ToastBackgroundBrush" Color="#E6E27508"/>
@@ -27,7 +31,6 @@
           <SolidColorBrush x:Key="ToastBackgroundBrush" Color="#E6200E02"/>
           <SolidColorBrush x:Key="ToastProgressBrush" Color="#1B2C03"/>
         </ResourceDictionary>
-
       </ResourceDictionary.ThemeDictionaries>
     </ResourceDictionary>
   </Application.Resources>

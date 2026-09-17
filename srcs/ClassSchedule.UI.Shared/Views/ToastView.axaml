@@ -5,7 +5,8 @@
              xmlns:models="using:ClassSchedule.UI.Shared.Models"
              x:DataType="vm:ToastViewModel"
              IsVisible="{Binding HasItems}"
-             HorizontalAlignment="Center" VerticalAlignment="Top"
+             HorizontalAlignment="Center"
+             VerticalAlignment="Top"
              Margin="0,16,0,0">
 
   <!-- 多条提示纵向堆叠, 最新条目在上方, 每条独立计时 -->
@@ -15,21 +16,23 @@
         <StackPanel Spacing="8" HorizontalAlignment="Center"/>
       </ItemsPanelTemplate>
     </ItemsControl.ItemsPanel>
+
     <ItemsControl.ItemTemplate>
       <DataTemplate x:DataType="models:Toast">
-        <Border Padding="12,8" CornerRadius="6"
-                Background="{DynamicResource ToastBackgroundBrush}"
+        <Border Background="{DynamicResource ToastBackgroundBrush}"
                 BoxShadow="0 4 12 0 #33000000"
-                Opacity="{Binding EnterOpacity}"
+                CornerRadius="{StaticResource CardCornerRadius}"
                 Cursor="Hand"
+                Opacity="{Binding EnterOpacity}"
+                Padding="{StaticResource CardPadding}"
                 Tapped="OnToastTapped">
 
-          <!-- 入场动画: 透明度从 0 淡入, 位移从上方 16px 滑入, 由视图模型在加入后下一帧触发 -->
           <Border.Transitions>
             <Transitions>
               <DoubleTransition Property="Opacity" Duration="0:0:0.15"/>
             </Transitions>
           </Border.Transitions>
+
           <Border.RenderTransform>
             <TranslateTransform Y="{Binding EnterOffset}">
               <TranslateTransform.Transitions>
@@ -45,7 +48,11 @@
 
             <!-- 剩余时间进度条: 前景条按剩余比例从满宽缩至零, 线性过渡补间保证平滑缩短 -->
             <Border Height="3" CornerRadius="1.5" Background="#33FFFFFF">
-              <Border CornerRadius="1.5" Background="{DynamicResource ToastProgressBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+              <Border Background="{DynamicResource ToastProgressBrush}"
+                      CornerRadius="1.5"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch">
+
                 <Border.RenderTransform>
                   <ScaleTransform ScaleX="{Binding Progress}" ScaleY="1">
                     <ScaleTransform.Transitions>
@@ -56,10 +63,12 @@
                     </ScaleTransform.Transitions>
                   </ScaleTransform>
                 </Border.RenderTransform>
+
                 <Border.RenderTransformOrigin>0,0.5</Border.RenderTransformOrigin>
               </Border>
             </Border>
           </StackPanel>
+
         </Border>
       </DataTemplate>
     </ItemsControl.ItemTemplate>

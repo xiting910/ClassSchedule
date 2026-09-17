@@ -1,6 +1,8 @@
 using Avalonia.Controls;
 using ClassSchedule.UI.Shared.ViewModels;
 using ClassSchedule.UI.Shared.Views;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace ClassSchedule.UI.Shared.Tests;
 
@@ -40,8 +42,7 @@ public sealed class ViewLocatorTests
     {
         var locator = new ViewLocator();
 
-        Assert.True(locator.Match(new FakeViewModel()));
-        Assert.True(locator.Match(new ShellViewModel()));
+        Assert.True(locator.Match(new FakePageViewModel()));
     }
 
     /// <summary>
@@ -68,9 +69,12 @@ public sealed class ViewLocatorTests
 
         await TestEnvironmentFixture.Session.Dispatch(() =>
         {
-            var control = locator.Build(new ShellViewModel());
+            var control = locator.Build(new ToastViewModel(
+                NullLogger<ToastViewModel>.Instance,
+                new(NullLogger<UIOptions>.Instance, new ConfigurationBuilder().Build())
+            ));
 
-            _ = Assert.IsType<ShellView>(control);
+            _ = Assert.IsType<ToastView>(control);
         }, TestContext.Current.CancellationToken);
     }
 
@@ -84,10 +88,10 @@ public sealed class ViewLocatorTests
 
         await TestEnvironmentFixture.Session.Dispatch(() =>
         {
-            var control = locator.Build(new FakeViewModel());
+            var control = locator.Build(new FakePageViewModel());
 
             var textBlock = Assert.IsType<TextBlock>(control);
-            Assert.Equal($"未找到视图: {typeof(FakeViewModel).FullName}", textBlock.Text);
+            Assert.Equal($"未找到视图: {typeof(FakePageViewModel).FullName}", textBlock.Text);
         }, TestContext.Current.CancellationToken);
     }
 }

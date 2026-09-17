@@ -10,6 +10,12 @@
 ## [Unreleased]
 
 ### Added
+- 添加应用壳导航栈, ShellViewModel 支持按页面视图模型类型入栈与出栈, 每个入栈页在独立的服务范围里解析, 出栈时释放
+- 添加 IPageViewModel 与 IPageViewModel<TArg> 页面视图模型接口, 由页面自行实现载入逻辑并返回结果
+- 添加物理返回键处理, 安卓端优先弹栈, 栈空时回退到课表 Tab, 两者都不满足则交还系统
+- 添加应用壳的底部 TabControl, 承载课表、课程与设置三个占位页
+- 添加壳视图模型的单元测试, 覆盖入栈成功与失败、异常处理、服务范围释放、返回键弹栈与 Tab 回退
+- 添加 UI 资源 CardCornerRadius 与 CardPadding, 统一卡片圆角与内边距
 - 添加 UI 选项 CurrentTimetableId 与 ShowWeekends, 分别记录当前课程表 ID 与是否显示周末, 并随设置文件持久化
 - 添加 VS Code 工作区设置, 指定 C# Dev Kit 默认加载的解决方案文件
 - 添加 Timetable.ChangeAllPeriodDurations, 保持各节次定义的开始时间不变并统一持续时间, 放不下时不做任何修改
@@ -61,6 +67,9 @@
 - 采用集中包管理 (CPM) 统一管理 NuGet 包版本
 
 ### Changed
+- 壳视图模型改为构造函数注入服务范围工厂、日志记录器与 Toast 视图模型
+- 壳视图更名职责为承载页面栈与全局提示, 并挂接加载与卸载钩子管理返回键, 全局提示始终位于最上层
+- Toast 视图的卡片圆角与内边距改用应用级资源, 并在 XAML 中统一属性书写顺序
 - 统一源文件编码为 UTF-8 无 BOM, 并统一 MainActivity 的 Activity 特性参数顺序
 - Toast 提示适配安卓端: 显示位置由右下角改为顶部居中, 入场动画改为从上方滑入
 - 安卓端壳视图优先通过 IActivityApplicationLifetime.MainViewFactory 创建, 兼顾单视图生命周期
@@ -79,6 +88,7 @@
 - 依赖注入与日志包引用由桌面端、安卓端与 UI 共享层测试项目移入 UI 共享层, 由后者统一传递
 
 ### Removed
+- 移除测试用视图模型 FakeViewModel, 由 FakePageViewModel 取代
 - 移除 Microsoft.EntityFrameworkCore.InMemory 包引用, 测试不再依赖内存数据库
 - 移除 Domain 层的 DI 注册扩展 AddDomain 及其依赖注入抽象包引用, 使领域层保持零依赖
 - 移除桌面端、安卓端与 UI 共享层测试的组合根中对 AddDomain 的调用

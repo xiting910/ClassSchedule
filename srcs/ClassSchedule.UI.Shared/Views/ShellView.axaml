@@ -1,7 +1,37 @@
 <UserControl x:Class="ClassSchedule.UI.Shared.Views.ShellView"
              xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="using:ClassSchedule.UI.Shared.Views"
              xmlns:vm="using:ClassSchedule.UI.Shared.ViewModels"
-             x:DataType="vm:ShellViewModel">
+             x:DataType="vm:ShellViewModel"
+             Loaded="OnLoaded"
+             Unloaded="OnUnloaded">
+
+  <Panel>
+
+    <!-- Tab 内容区: 三个占位页, 后续阶段各自替换成真正的页面 -->
+    <TabControl SelectedIndex="{Binding SelectedTabIndex}" TabStripPlacement="Bottom">
+      <TabItem Header="课表">
+        <TextBlock HorizontalAlignment="Center" Text="课表" VerticalAlignment="Center"/>
+      </TabItem>
+
+      <TabItem Header="课程">
+        <TextBlock HorizontalAlignment="Center" Text="课程" VerticalAlignment="Center"/>
+      </TabItem>
+
+      <TabItem Header="设置">
+        <TextBlock HorizontalAlignment="Center" Text="设置" VerticalAlignment="Center"/>
+      </TabItem>
+    </TabControl>
+
+    <!-- 导航栈覆盖层: 页面自带不透明背景, 这里不叠底色 -->
+    <ContentControl Content="{Binding CurrentPage}" IsVisible="{Binding HasPage}"/>
+
+    <!-- 后续: 共用遮罩与确认卡片必须插在这一层与 Toast 之间, 否则全屏页会盖住遮罩 -->
+
+    <!-- 全局提示: 永远最上层 -->
+    <views:ToastView DataContext="{Binding Toast}"/>
+
+  </Panel>
 
 </UserControl>
