@@ -35,7 +35,7 @@ internal sealed partial class DatabaseInitializer(
         EventId = 0,
         EventName = "DatabaseInitialized",
         Level = LogLevel.Information,
-        Message = "数据库初始化完成: {ConnectionString}"
+        Message = "Database initialized successfully. Connection string: {ConnectionString}"
     )]
     private partial void LogDatabaseInitialized(string connectionString);
 }

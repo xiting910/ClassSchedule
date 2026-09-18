@@ -92,7 +92,7 @@ internal sealed partial class TimetableRepository(
         EventId = 1,
         EventName = "Listed",
         Level = LogLevel.Debug,
-        Message = "课程表列表加载完成: 数量={Count}"
+        Message = "Timetable list loaded: {Count} items"
     )]
     private partial void LogListed(int count);
 
@@ -104,7 +104,7 @@ internal sealed partial class TimetableRepository(
         EventId = 2,
         EventName = "NotFound",
         Level = LogLevel.Warning,
-        Message = "课程表未找到: {TimetableId}"
+        Message = "Timetable not found: {TimetableId}"
     )]
     private partial void LogNotFound(Guid timetableId);
 
@@ -117,7 +117,7 @@ internal sealed partial class TimetableRepository(
         EventId = 3,
         EventName = "Deleted",
         Level = LogLevel.Information,
-        Message = "课程表已删除: {TimetableId}, 影响行数={AffectedRows}"
+        Message = "Timetable deleted: {TimetableId}, AffectedRows={AffectedRows}"
     )]
     private partial void LogDeleted(Guid timetableId, int affectedRows);
 
@@ -131,7 +131,7 @@ internal sealed partial class TimetableRepository(
         EventId = 4,
         EventName = "Added",
         Level = LogLevel.Information,
-        Message = "课程表已新增: {TimetableId}, 名称={Name}, 影响行数={AffectedRows}"
+        Message = "Timetable added: {TimetableId}, Name={Name}, AffectedRows={AffectedRows}"
     )]
     private partial void LogAdded(Guid timetableId, string name, int affectedRows);
 
@@ -143,7 +143,7 @@ internal sealed partial class TimetableRepository(
         EventId = 5,
         EventName = "Saved",
         Level = LogLevel.Information,
-        Message = "课程表更改已保存: 影响行数={AffectedRows}"
+        Message = "Timetable changes saved: AffectedRows={AffectedRows}"
     )]
     private partial void LogSaved(int affectedRows);
 }
