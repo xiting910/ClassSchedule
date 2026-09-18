@@ -256,6 +256,146 @@ public sealed class ShellViewModelTests
     }
 
     /// <summary>
+    /// 验证请求显示确认对话框时创建视图模型并初始化补间状态
+    /// </summary>
+    [Fact]
+    public async Task RequestConfirm_无对话框_创建视图模型并初始化补间状态()
+    {
+        _ = await TestEnvironmentFixture.Session.Dispatch(() =>
+        {
+            using var provider = CreateProvider();
+            var shell = provider.GetRequiredService<ShellViewModel>();
+
+            shell.RequestConfirm("删除片段", "删除后无法恢复", "删除", () => Task.CompletedTask);
+
+            var confirm = Assert.IsType<ConfirmViewModel>(shell.Confirm);
+            Assert.Equal("删除片段", confirm.Title);
+            Assert.Equal("删除后无法恢复", confirm.Message);
+            Assert.Equal("删除", confirm.ConfirmText);
+            Assert.True(shell.IsConfirmOpen);
+            Assert.True(shell.IsConfirmVisible);
+            Assert.Equal(Constants.MaxRatio, shell.ConfirmOpacity);
+            Assert.Equal(0, shell.ConfirmOffsetY);
+
+            return 0;
+        }, TestContext.Current.CancellationToken);
+    }
+
+    /// <summary>
+    /// 验证已有对话框时忽略重复的显示请求
+    /// </summary>
+    [Fact]
+    public async Task RequestConfirm_已有对话框_忽略重复请求()
+    {
+        _ = await TestEnvironmentFixture.Session.Dispatch(() =>
+        {
+            using var provider = CreateProvider();
+            var shell = provider.GetRequiredService<ShellViewModel>();
+
+            shell.RequestConfirm("删除片段", "删除后无法恢复", "删除", () => Task.CompletedTask);
+            var opened = Assert.IsType<ConfirmViewModel>(shell.Confirm);
+
+            shell.RequestConfirm("删除课程", "删除后无法恢复", "删除", () => Task.CompletedTask);
+
+            Assert.Same(opened, shell.Confirm);
+            Assert.Equal("删除片段", shell.Confirm.Title);
+
+            // 请求取消的后已有的对话框不会立刻释放, 需要等到动画结束后才释放
+            shell.RequestCancelConfirm();
+            shell.RequestConfirm("删除课程", "删除后无法恢复", "删除", () => Task.CompletedTask);
+
+            Assert.Same(opened, shell.Confirm);
+            Assert.Equal("删除片段", shell.Confirm.Title);
+
+            return 0;
+        }, TestContext.Current.CancellationToken);
+    }
+
+    /// <summary>
+    /// 验证没有对话框时取消请求不产生任何变化
+    /// </summary>
+    [Fact]
+    public async Task RequestCancelConfirm_无对话框_不产生变化()
+    {
+        _ = await TestEnvironmentFixture.Session.Dispatch(() =>
+        {
+            using var provider = CreateProvider();
+            var shell = provider.GetRequiredService<ShellViewModel>();
+
+            shell.RequestCancelConfirm();
+
+            Assert.Null(shell.Confirm);
+            Assert.False(shell.IsConfirmOpen);
+            Assert.False(shell.IsConfirmVisible);
+            Assert.Equal(0, shell.ConfirmOpacity);
+            Assert.Equal(16, shell.ConfirmOffsetY);
+
+            return 0;
+        }, TestContext.Current.CancellationToken);
+    }
+
+    /// <summary>
+    /// 验证已有对话框时取消请求关闭对话框并在动画结束之后释放视图模型
+    /// </summary>
+    [Fact]
+    public async Task RequestCancelConfirm_已有对话框_关闭对话框并释放视图模型()
+    {
+        _ = await TestEnvironmentFixture.Session.Dispatch(async () =>
+        {
+            using var provider = CreateProvider();
+            var shell = provider.GetRequiredService<ShellViewModel>();
+
+            shell.RequestConfirm("删除片段", "删除后无法恢复", "删除", () => Task.CompletedTask);
+            var confirm = Assert.IsType<ConfirmViewModel>(shell.Confirm);
+
+            shell.RequestCancelConfirm();
+
+            Assert.False(shell.IsConfirmOpen);
+            Assert.Equal(0, shell.ConfirmOpacity);
+            Assert.Equal(16, shell.ConfirmOffsetY);
+
+            await Task.Delay(300);
+
+            Assert.Null(shell.Confirm);
+            Assert.False(shell.IsConfirmVisible);
+
+            return 0;
+        }, TestContext.Current.CancellationToken);
+    }
+
+    /// <summary>
+    /// 验证返回键在确认对话框打开时优先取消对话框, 不弹出导航栈
+    /// </summary>
+    [Fact]
+    public async Task TryGoBack_确认对话框打开_优先取消且不弹栈()
+    {
+        _ = await TestEnvironmentFixture.Session.Dispatch(async () =>
+        {
+            using var provider = CreateProvider(services => services.AddScoped<FakePageViewModel>());
+            var shell = provider.GetRequiredService<ShellViewModel>();
+
+            await shell.PushAsync<FakePageViewModel>();
+            var page = Assert.IsType<FakePageViewModel>(shell.CurrentPage);
+
+            shell.RequestConfirm("删除片段", "删除后无法恢复", "删除", () => Task.CompletedTask);
+            var confirm = Assert.IsType<ConfirmViewModel>(shell.Confirm);
+
+            Assert.True(shell.TryGoBack());
+            Assert.Same(confirm, shell.Confirm);
+            Assert.False(shell.IsConfirmOpen);
+            Assert.True(shell.HasPage);
+            Assert.Same(page, shell.CurrentPage);
+
+            Assert.True(shell.TryGoBack());
+            Assert.False(shell.HasPage);
+            Assert.Null(shell.CurrentPage);
+            Assert.True(page.IsDisposed);
+
+            return 0;
+        }, TestContext.Current.CancellationToken);
+    }
+
+    /// <summary>
     /// 验证栈非空时返回一次弹出一层, 并回到下一层的页面
     /// </summary>
     [Fact]

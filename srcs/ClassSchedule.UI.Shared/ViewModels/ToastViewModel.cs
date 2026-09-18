@@ -159,7 +159,7 @@ public sealed partial class ToastViewModel : ObservableObject
     /// </summary>
     /// <param name="message">提示文本</param>
     [LoggerMessage(
-        EventId = 1,
+        EventId = 0,
         EventName = "ToastShown",
         Level = LogLevel.Debug,
         Message = "Toast shown: {Message}"

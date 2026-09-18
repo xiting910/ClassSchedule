@@ -27,7 +27,44 @@
     <!-- 导航栈覆盖层: 页面自带不透明背景, 这里不叠底色 -->
     <ContentControl Content="{Binding CurrentPage}" IsVisible="{Binding HasPage}"/>
 
-    <!-- 后续: 共用遮罩与确认卡片必须插在这一层与 Toast 之间, 否则全屏页会盖住遮罩 -->
+    <!-- 共用遮罩: 必须盖在导航栈覆盖层之上, 点击等同于取消 -->
+    <Border Background="{DynamicResource ConfirmMaskBrush}"
+            IsVisible="{Binding IsConfirmVisible}"
+            Opacity="{Binding ConfirmOpacity}"
+            PointerPressed="OnMaskPressed">
+      <Border.Transitions>
+        <Transitions>
+          <DoubleTransition Duration="0:0:0.2" Property="Opacity"/>
+        </Transitions>
+      </Border.Transitions>
+    </Border>
+
+    <!-- 确认卡片: 从下方 16px 上浮并淡入, 内容由 ConfirmView 提供 -->
+    <Border Background="{DynamicResource CardBackgroundBrush}"
+            CornerRadius="{DynamicResource CardCornerRadius}"
+            HorizontalAlignment="Center"
+            IsVisible="{Binding IsConfirmVisible}"
+            Opacity="{Binding ConfirmOpacity}"
+            Padding="{DynamicResource CardPadding}"
+            VerticalAlignment="Center">
+      <Border.Transitions>
+        <Transitions>
+          <DoubleTransition Duration="0:0:0.2" Property="Opacity"/>
+        </Transitions>
+      </Border.Transitions>
+
+      <Border.RenderTransform>
+        <TranslateTransform Y="{Binding ConfirmOffsetY}">
+          <TranslateTransform.Transitions>
+            <Transitions>
+              <DoubleTransition Duration="0:0:0.2" Easing="CubicEaseOut" Property="Y"/>
+            </Transitions>
+          </TranslateTransform.Transitions>
+        </TranslateTransform>
+      </Border.RenderTransform>
+
+      <ContentControl Content="{Binding Confirm}"/>
+    </Border>
 
     <!-- 全局提示: 永远最上层 -->
     <views:ToastView DataContext="{Binding Toast}"/>

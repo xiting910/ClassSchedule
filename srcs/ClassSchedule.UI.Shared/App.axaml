@@ -22,12 +22,20 @@
       <ResourceDictionary.ThemeDictionaries>
         <!-- 浅色主题 -->
         <ResourceDictionary x:Key="Light">
+          <SolidColorBrush x:Key="CardBackgroundBrush" Color="#FFFFFF"/>
+          <SolidColorBrush x:Key="ConfirmMaskBrush" Color="#66000000"/>
+          <SolidColorBrush x:Key="DangerButtonBackgroundBrush" Color="#FCE8E6"/>
+          <SolidColorBrush x:Key="DangerButtonForegroundBrush" Color="#B3261E"/>
           <SolidColorBrush x:Key="ToastBackgroundBrush" Color="#E6E27508"/>
           <SolidColorBrush x:Key="ToastProgressBrush" Color="#8DD30C"/>
         </ResourceDictionary>
 
         <!-- 深色主题 -->
         <ResourceDictionary x:Key="Dark">
+          <SolidColorBrush x:Key="CardBackgroundBrush" Color="#232733"/>
+          <SolidColorBrush x:Key="ConfirmMaskBrush" Color="#66000000"/>
+          <SolidColorBrush x:Key="DangerButtonBackgroundBrush" Color="#4A2222"/>
+          <SolidColorBrush x:Key="DangerButtonForegroundBrush" Color="#FF8A80"/>
           <SolidColorBrush x:Key="ToastBackgroundBrush" Color="#E6200E02"/>
           <SolidColorBrush x:Key="ToastProgressBrush" Color="#1B2C03"/>
         </ResourceDictionary>

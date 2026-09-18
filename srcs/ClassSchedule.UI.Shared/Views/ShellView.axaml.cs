@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using ClassSchedule.UI.Shared.ViewModels;
 
@@ -42,6 +43,19 @@ public sealed partial class ShellView : UserControl
     {
         _topLevel?.BackRequested -= OnBackRequested;
         _topLevel = null;
+    }
+
+    /// <summary>
+    /// 点击遮罩等同于取消, 关闭确认对话框
+    /// </summary>
+    /// <param name="sender">遮罩</param>
+    /// <param name="e">指针事件参数</param>
+    private void OnMaskPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (DataContext is ShellViewModel viewModel)
+        {
+            viewModel.RequestCancelConfirm();
+        }
     }
 
     /// <summary>

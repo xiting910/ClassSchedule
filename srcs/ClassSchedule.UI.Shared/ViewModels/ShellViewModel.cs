@@ -12,15 +12,22 @@ namespace ClassSchedule.UI.Shared.ViewModels;
 /// <summary>
 /// 壳视图模型, 承载整个应用的视图模型, 负责管理全局状态与导航
 /// </summary>
+/// <param name="confirmLogger">确认对话框视图模型的日志记录器</param>
+/// <param name="shellLogger">壳视图模型的日志记录器</param>
 /// <param name="scopeFactory">服务范围工厂</param>
-/// <param name="logger">日志记录器</param>
 /// <param name="toast">提示视图模型</param>
 public sealed partial class ShellViewModel(
+    ILogger<ConfirmViewModel> confirmLogger,
+    ILogger<ShellViewModel> shellLogger,
     IServiceScopeFactory scopeFactory,
-    ILogger<ShellViewModel> logger,
     ToastViewModel toast
 ) : ObservableObject
 {
+    /// <summary>
+    /// 确认对话框关闭时的纵向偏移
+    /// </summary>
+    private const double ConfirmHiddenOffsetY = 16.0;
+
     /// <summary>
     /// 导航栈里的一页: 页面级服务范围与它的视图模型
     /// </summary>
@@ -29,14 +36,14 @@ public sealed partial class ShellViewModel(
     private sealed record PageEntry(IServiceScope Scope, IPageViewModel ViewModel);
 
     /// <summary>
+    /// 日志记录器
+    /// </summary>
+    private readonly ILogger<ShellViewModel> _logger = shellLogger;
+
+    /// <summary>
     /// 服务范围工厂, 每个入栈页在自己的范围里解析视图模型与仓储
     /// </summary>
     private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
-
-    /// <summary>
-    /// 日志记录器
-    /// </summary>
-    private readonly ILogger<ShellViewModel> _logger = logger;
 
     /// <summary>
     /// 导航栈, 栈顶是当前覆盖在壳之上的那一页
@@ -67,6 +74,36 @@ public sealed partial class ShellViewModel(
     public partial IPageViewModel? CurrentPage { get; set; }
 
     /// <summary>
+    /// 当前显示的确认对话框视图模型
+    /// </summary>
+    [ObservableProperty]
+    public partial ConfirmViewModel? Confirm { get; set; }
+
+    /// <summary>
+    /// 确认对话框是否处于打开状态
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsConfirmOpen { get; set; }
+
+    /// <summary>
+    /// 确认对话框是否可见
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsConfirmVisible { get; set; }
+
+    /// <summary>
+    /// 确认对话框的淡入淡出透明度
+    /// </summary>
+    [ObservableProperty]
+    public partial double ConfirmOpacity { get; set; }
+
+    /// <summary>
+    /// 确认对话框的纵向偏移
+    /// </summary>
+    [ObservableProperty]
+    public partial double ConfirmOffsetY { get; set; } = ConfirmHiddenOffsetY;
+
+    /// <summary>
     /// 将一页推入导航栈
     /// </summary>
     /// <typeparam name="TPageViewModel">页面视图模型类型</typeparam>
@@ -87,11 +124,44 @@ public sealed partial class ShellViewModel(
     }
 
     /// <summary>
-    /// 处理一次返回请求, 依次尝试弹出导航栈与回退到课表 Tab
+    /// 请求显示确认对话框
+    /// </summary>
+    /// <param name="title">标题</param>
+    /// <param name="message">说明文本</param>
+    /// <param name="confirmText">确认按钮的文案</param>
+    /// <param name="onConfirm">点击确认时执行的回调</param>
+    public void RequestConfirm(string title, string message, string confirmText, Func<Task> onConfirm)
+    {
+        if (IsConfirmVisible) { return; }
+
+        Confirm = new(title, message, confirmText, onConfirm, CloseConfirmAsync, Toast, confirmLogger);
+        IsConfirmOpen = true;
+        IsConfirmVisible = true;
+        ConfirmOpacity = Constants.MaxRatio;
+        ConfirmOffsetY = 0;
+    }
+
+    /// <summary>
+    /// 请求取消确认对话框
+    /// </summary>
+    public void RequestCancelConfirm()
+    {
+        if (!IsConfirmVisible) { return; }
+        _ = CloseConfirmAsync();
+    }
+
+    /// <summary>
+    /// 处理一次返回请求, 依次尝试关闭确认对话框, 弹出导航栈与回退到课表 Tab
     /// </summary>
     /// <returns><see langword="true"/> 表示已消费, 否则为 <see langword="false"/></returns>
     public bool TryGoBack()
     {
+        if (IsConfirmOpen)
+        {
+            _ = CloseConfirmAsync();
+            return true;
+        }
+
         if (_navigationStack.Count > 0)
         {
             var entry = _navigationStack.Pop();
@@ -151,6 +221,22 @@ public sealed partial class ShellViewModel(
 
             LogPushException(typeof(TPageViewModel).Name, ex);
         }
+    }
+
+    /// <summary>
+    /// 关闭确认对话框
+    /// </summary>
+    private async Task CloseConfirmAsync()
+    {
+        IsConfirmOpen = false;
+        ConfirmOpacity = 0;
+        ConfirmOffsetY = ConfirmHiddenOffsetY;
+
+        const int OverlayAnimationDurationMs = 200;
+        await Task.Delay(OverlayAnimationDurationMs);
+
+        IsConfirmVisible = false;
+        Confirm = null;
     }
 
     /// <summary>
