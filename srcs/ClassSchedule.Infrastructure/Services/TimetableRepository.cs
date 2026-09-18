@@ -89,7 +89,7 @@ internal sealed partial class TimetableRepository(
     /// </summary>
     /// <param name="count">加载的课程表数量</param>
     [LoggerMessage(
-        EventId = 0,
+        EventId = 1,
         EventName = "Listed",
         Level = LogLevel.Debug,
         Message = "课程表列表加载完成: 数量={Count}"
@@ -101,7 +101,7 @@ internal sealed partial class TimetableRepository(
     /// </summary>
     /// <param name="timetableId">课程表 Id</param>
     [LoggerMessage(
-        EventId = 1,
+        EventId = 2,
         EventName = "NotFound",
         Level = LogLevel.Warning,
         Message = "课程表未找到: {TimetableId}"
@@ -114,7 +114,7 @@ internal sealed partial class TimetableRepository(
     /// <param name="timetableId">课程表 Id</param>
     /// <param name="affectedRows">受影响的行数</param>
     [LoggerMessage(
-        EventId = 2,
+        EventId = 3,
         EventName = "Deleted",
         Level = LogLevel.Information,
         Message = "课程表已删除: {TimetableId}, 影响行数={AffectedRows}"
@@ -128,7 +128,7 @@ internal sealed partial class TimetableRepository(
     /// <param name="name">课程表名称</param>
     /// <param name="affectedRows">受影响的行数</param>
     [LoggerMessage(
-        EventId = 3,
+        EventId = 4,
         EventName = "Added",
         Level = LogLevel.Information,
         Message = "课程表已新增: {TimetableId}, 名称={Name}, 影响行数={AffectedRows}"
@@ -140,7 +140,7 @@ internal sealed partial class TimetableRepository(
     /// </summary>
     /// <param name="affectedRows">受影响的行数</param>
     [LoggerMessage(
-        EventId = 4,
+        EventId = 5,
         EventName = "Saved",
         Level = LogLevel.Information,
         Message = "课程表更改已保存: 影响行数={AffectedRows}"
