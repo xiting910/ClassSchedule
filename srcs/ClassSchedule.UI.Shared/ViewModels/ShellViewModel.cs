@@ -1,5 +1,6 @@
 using ClassSchedule.Domain.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
@@ -16,11 +17,13 @@ namespace ClassSchedule.UI.Shared.ViewModels;
 /// <param name="shellLogger">壳视图模型的日志记录器</param>
 /// <param name="scopeFactory">服务范围工厂</param>
 /// <param name="toast">提示视图模型</param>
+/// <param name="uiOptions">UI 配置</param>
 public sealed partial class ShellViewModel(
     ILogger<ConfirmViewModel> confirmLogger,
     ILogger<ShellViewModel> shellLogger,
     IServiceScopeFactory scopeFactory,
-    ToastViewModel toast
+    ToastViewModel toast,
+    UIOptions uiOptions
 ) : ObservableObject
 {
     /// <summary>
@@ -104,6 +107,28 @@ public sealed partial class ShellViewModel(
     public partial double ConfirmOffsetY { get; set; } = ConfirmHiddenOffsetY;
 
     /// <summary>
+    /// 按首页决策打开启动页
+    /// </summary>
+    public async void OpenHomePage()
+    {
+        try
+        {
+            if (uiOptions.CurrentTimetableId is not { } currentTimetableId)
+            {
+                await PushCoreAsync<TimetableListViewModel>(vm => vm.LoadAsync());
+                return;
+            }
+
+            // TODO: 显示详细课表页
+        }
+        catch (Exception ex)
+        {
+            Toast.Show($"启动时载入课表失败: {ex.Message}");
+            LogHomePageException(ex);
+        }
+    }
+
+    /// <summary>
     /// 将一页推入导航栈
     /// </summary>
     /// <typeparam name="TPageViewModel">页面视图模型类型</typeparam>
@@ -185,6 +210,24 @@ public sealed partial class ShellViewModel(
     }
 
     /// <summary>
+    /// 打开课表列表页
+    /// </summary>
+    [RelayCommand]
+    private Task OpenTimetableListAsync()
+    {
+        return PushCoreAsync<TimetableListViewModel>(vm => vm.LoadAsync());
+    }
+
+    /// <summary>
+    /// 打开新建课表页
+    /// </summary>
+    [RelayCommand]
+    private Task OpenCreateTimetableAsync()
+    {
+        return PushCoreAsync<CreateTimetableViewModel>(vm => vm.LoadAsync());
+    }
+
+    /// <summary>
     /// 将一页推入导航栈的核心逻辑
     /// </summary>
     /// <typeparam name="TPageViewModel">页面视图模型类型</typeparam>
@@ -193,11 +236,12 @@ public sealed partial class ShellViewModel(
     where TPageViewModel : IPageViewModel
     {
         var scope = _scopeFactory.CreateScope();
-        var viewModel = scope.ServiceProvider.GetRequiredService<TPageViewModel>();
 
         try
         {
+            var viewModel = scope.ServiceProvider.GetRequiredService<TPageViewModel>();
             var result = await load(viewModel);
+
             if (result is FailureResult failure)
             {
                 Toast.Show(failure.Message);
@@ -290,4 +334,16 @@ public sealed partial class ShellViewModel(
         Message = "Popped page: Depth={Depth}"
     )]
     private partial void LogPopped(int depth);
+
+    /// <summary>
+    /// 记录启动时载入课表失败的日志
+    /// </summary>
+    /// <param name="exception">异常</param>
+    [LoggerMessage(
+        EventId = 5,
+        EventName = "HomePageException",
+        Level = LogLevel.Warning,
+        Message = "Exception occurred while opening the home page"
+    )]
+    private partial void LogHomePageException(Exception exception);
 }

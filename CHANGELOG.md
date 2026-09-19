@@ -10,6 +10,15 @@
 ## [Unreleased]
 
 ### Added
+- 添加课表列表页, 支持切换当前课表、行内重命名与二次确认后删除, 操作后就地更新列表而不重载整页
+- 添加新建课表页, 预填 12 节时间模板并允许逐行改时间与增删节次, 提交前完成六项校验
+- 新建课表成功后把当前课表设为新表 (仅当原本没有当前课表)
+- 添加 TimetableListViewModel 与 CreateTimetableViewModel 入栈页视图模型, 由导航层在各自的服务范围里解析
+- 添加 TimetableListItem 列表行模型与 PeriodInputRow 节次时间输入行模型
+- 添加 TimeOnlyConverter, 在节次时间的 TimeOnly 与 TimePicker 使用的 TimeSpan 之间双向转换
+- 添加 ShellViewModel.OpenHomePage 与启动接线, 未指定当前课表时以课表列表页作为启动页
+- 添加 UI 资源 PageBackgroundBrush、TitleForegroundBrush、SecondaryTextBrush 与主要动作按钮的前景背景色
+- 添加课表列表、新建课表与时间转换的单元测试, 并补充 OpenHomePage 在壳视图模型中的覆盖
 - 添加应用壳的确认对话框, 由共用遮罩与卡片承载, 卡片从下方 16px 上浮并淡入
 - 添加确认对话框的取消途径: 点击遮罩、取消按钮与返回键均可关闭
 - 添加 ConfirmViewModel 确认对话框视图模型, 确认回调完成后请求关闭
@@ -72,6 +81,9 @@
 - 采用集中包管理 (CPM) 统一管理 NuGet 包版本
 
 ### Changed
+- 底部 Tab 条改为等宽铺满, Tab 标题在各自区域内居中
+- 应用壳的课表与设置 Tab 增加临时入口按钮, 分别打开课表列表与新建课表页
+- 主题无关的尺寸令牌改用 StaticResource 引用, 主题画刷仍保持 DynamicResource
 - 壳视图模型补充确认对话框的日志记录器参数与对话框状态字段
 - 数据库初始化器与课程表仓储的日志文案改为英文, 占位符名称、事件名与日志级别均未变
 - 课程表仓储的日志事件 ID 整体后移一位 (0-4 变为 1-5), 日志文本、事件名与级别均未变

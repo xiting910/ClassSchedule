@@ -57,6 +57,7 @@ public sealed partial class App : Application
     /// <inheritdoc/>
     public override void OnFrameworkInitializationCompleted()
     {
+        // 调用基类方法, 以便在应用程序启动时完成框架初始化
         base.OnFrameworkInitializationCompleted();
 
         // 获取服务容器
@@ -101,5 +102,8 @@ public sealed partial class App : Application
 
         // 初始化应用的核心壳视图
         services.GetRequiredService<IShellInitializer>().Initialize(ApplicationLifetime);
+
+        // 按首页决策打开启动页
+        services.GetRequiredService<ShellViewModel>().OpenHomePage();
     }
 }

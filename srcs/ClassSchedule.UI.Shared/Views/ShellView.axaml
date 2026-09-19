@@ -11,8 +11,26 @@
 
     <!-- Tab 内容区: 三个占位页, 后续阶段各自替换成真正的页面 -->
     <TabControl SelectedIndex="{Binding SelectedTabIndex}" TabStripPlacement="Bottom">
+      <!-- 三个 Tab 等宽铺满底部, 默认的横向 StackPanel 只按内容宽度排布 -->
+      <TabControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <UniformGrid Rows="1"/>
+        </ItemsPanelTemplate>
+      </TabControl.ItemsPanel>
+
+      <!-- TabItem 的 header 呈现在它自己的 HorizontalContentAlignment 上, 默认 Stretch 会让文字靠左 -->
+      <TabControl.Styles>
+        <Style Selector="TabItem">
+          <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+      </TabControl.Styles>
+
       <TabItem Header="课表">
-        <TextBlock HorizontalAlignment="Center" Text="课表" VerticalAlignment="Center"/>
+        <!-- 临时入口 -->
+        <Button Command="{Binding OpenTimetableListCommand}"
+                Content="课表列表"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"/>
       </TabItem>
 
       <TabItem Header="课程">
@@ -20,7 +38,11 @@
       </TabItem>
 
       <TabItem Header="设置">
-        <TextBlock HorizontalAlignment="Center" Text="设置" VerticalAlignment="Center"/>
+        <!-- 临时入口 -->
+        <Button Command="{Binding OpenCreateTimetableCommand}"
+                Content="新建课表"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"/>
       </TabItem>
     </TabControl>
 
@@ -41,11 +63,11 @@
 
     <!-- 确认卡片: 从下方 16px 上浮并淡入, 内容由 ConfirmView 提供 -->
     <Border Background="{DynamicResource CardBackgroundBrush}"
-            CornerRadius="{DynamicResource CardCornerRadius}"
+            CornerRadius="{StaticResource CardCornerRadius}"
             HorizontalAlignment="Center"
             IsVisible="{Binding IsConfirmVisible}"
             Opacity="{Binding ConfirmOpacity}"
-            Padding="{DynamicResource CardPadding}"
+            Padding="{StaticResource CardPadding}"
             VerticalAlignment="Center">
       <Border.Transitions>
         <Transitions>

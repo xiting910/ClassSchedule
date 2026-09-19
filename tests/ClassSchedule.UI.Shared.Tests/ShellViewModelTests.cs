@@ -1,7 +1,9 @@
 using ClassSchedule.Domain.Models;
+using ClassSchedule.Infrastructure.Interfaces;
 using ClassSchedule.UI.Shared.ViewModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 
 namespace ClassSchedule.UI.Shared.Tests;
 
@@ -40,6 +42,33 @@ public sealed class ShellViewModelTests
             ValidateScopes = true,
             ValidateOnBuild = true
         });
+    }
+
+    /// <summary>
+    /// 验证未指定当前课表时打开首页会推入课表列表页
+    /// </summary>
+    [Fact]
+    public async Task OpenHomePage_未指定当前课表_推入课表列表页()
+    {
+        _ = await TestEnvironmentFixture.Session.Dispatch(async () =>
+        {
+            var repository = new Mock<ITimetableRepository>();
+            _ = repository.Setup(x => x.ListAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync([]);
+            using var provider = CreateProvider(services => services
+                .AddSingleton(repository.Object)
+                .AddScoped<TimetableListViewModel>());
+            var shell = provider.GetRequiredService<ShellViewModel>();
+
+            shell.OpenHomePage();
+            await Task.Delay(300);
+
+            Assert.True(shell.HasPage);
+            var page = Assert.IsType<TimetableListViewModel>(shell.CurrentPage);
+            Assert.True(page.IsEmpty);
+
+            return 0;
+        }, TestContext.Current.CancellationToken);
     }
 
     /// <summary>

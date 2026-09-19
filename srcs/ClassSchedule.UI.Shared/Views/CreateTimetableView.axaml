@@ -1,0 +1,123 @@
+<UserControl x:Class="ClassSchedule.UI.Shared.Views.CreateTimetableView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="using:ClassSchedule.UI.Shared.Models"
+             xmlns:shared="using:ClassSchedule.UI.Shared"
+             xmlns:vm="using:ClassSchedule.UI.Shared.ViewModels"
+             x:DataType="vm:CreateTimetableViewModel">
+
+  <UserControl.Resources>
+    <shared:TimeOnlyConverter x:Key="TimeOnlyConverter"/>
+  </UserControl.Resources>
+
+  <Grid Background="{DynamicResource PageBackgroundBrush}" RowDefinitions="Auto,*,Auto">
+
+    <TextBlock Grid.Row="0"
+               FontSize="18"
+               FontWeight="SemiBold"
+               Foreground="{DynamicResource TitleForegroundBrush}"
+               Margin="16"
+               Text="新建课表"/>
+
+    <ScrollViewer Grid.Row="1">
+      <StackPanel Margin="16,0,16,16" Spacing="16">
+
+        <StackPanel Spacing="4">
+          <TextBlock FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}" Text="课表名称"/>
+          <TextBox PlaceholderText="例如 2026 春季学期" Text="{Binding Name}"/>
+        </StackPanel>
+
+        <StackPanel Spacing="4">
+          <TextBlock FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}" Text="第一周的任意一天"/>
+          <DatePicker HorizontalAlignment="Stretch" SelectedDate="{Binding FirstDay}"/>
+        </StackPanel>
+
+        <StackPanel Spacing="4">
+          <TextBlock FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}" Text="总周数"/>
+          <NumericUpDown FormatString="0"
+                         HorizontalAlignment="Stretch"
+                         Increment="1"
+                         Maximum="30"
+                         Minimum="1"
+                         Value="{Binding TotalWeeks}"/>
+        </StackPanel>
+
+        <StackPanel Spacing="8">
+          <TextBlock FontSize="12"
+                     Foreground="{DynamicResource SecondaryTextBrush}"
+                     Text="节次时间 (默认 12 节, 可逐行修改)"/>
+
+          <ItemsControl ItemsSource="{Binding Periods}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel Spacing="12"/>
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="models:PeriodInputRow">
+                <Grid ColumnDefinitions="Auto,Auto,*"
+                      ColumnSpacing="8"
+                      RowDefinitions="Auto,Auto"
+                      RowSpacing="4">
+                  <StackPanel Grid.Column="0"
+                              Grid.Row="0"
+                              Grid.RowSpan="2"
+                              Spacing="2"
+                              VerticalAlignment="Center">
+                    <TextBlock HorizontalAlignment="Center" Text="{Binding OrdinalText}"/>
+                    <Button Click="OnRemovePeriodClick"
+                            Content="删除"
+                            FontSize="11"
+                            Padding="6,2"/>
+                  </StackPanel>
+                  <TextBlock Grid.Column="1"
+                             Grid.Row="0"
+                             Foreground="{DynamicResource SecondaryTextBrush}"
+                             Text="开始"
+                             VerticalAlignment="Center"/>
+                  <TimePicker Grid.Column="2"
+                              Grid.Row="0"
+                              ClockIdentifier="24HourClock"
+                              HorizontalAlignment="Stretch"
+                              SelectedTime="{Binding StartTime, Converter={StaticResource TimeOnlyConverter}}"/>
+                  <TextBlock Grid.Column="1"
+                             Grid.Row="1"
+                             Foreground="{DynamicResource SecondaryTextBrush}"
+                             Text="结束"
+                             VerticalAlignment="Center"/>
+                  <TimePicker Grid.Column="2"
+                              Grid.Row="1"
+                              ClockIdentifier="24HourClock"
+                              HorizontalAlignment="Stretch"
+                              SelectedTime="{Binding EndTime, Converter={StaticResource TimeOnlyConverter}}"/>
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+
+          <Button Command="{Binding AddPeriodCommand}"
+                  Content="添加一节"
+                  HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Center"/>
+        </StackPanel>
+
+      </StackPanel>
+    </ScrollViewer>
+
+    <UniformGrid Grid.Row="2" ColumnSpacing="12" Margin="16" Rows="1">
+      <Button Command="{Binding CancelCommand}"
+              Content="取消"
+              HorizontalAlignment="Stretch"
+              HorizontalContentAlignment="Center"/>
+      <Button Background="{DynamicResource PrimaryButtonBackgroundBrush}"
+              Command="{Binding SubmitCommand}"
+              Content="创建"
+              Foreground="{DynamicResource PrimaryButtonForegroundBrush}"
+              HorizontalAlignment="Stretch"
+              HorizontalContentAlignment="Center"/>
+    </UniformGrid>
+
+  </Grid>
+
+</UserControl>

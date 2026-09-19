@@ -1,0 +1,140 @@
+<UserControl x:Class="ClassSchedule.UI.Shared.Views.TimetableListView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="using:ClassSchedule.UI.Shared.Models"
+             xmlns:vm="using:ClassSchedule.UI.Shared.ViewModels"
+             x:DataType="vm:TimetableListViewModel">
+
+  <Grid Background="{DynamicResource PageBackgroundBrush}" RowDefinitions="Auto,*">
+
+    <StackPanel Grid.Row="0" Margin="16" Orientation="Horizontal" Spacing="8">
+      <Button Background="Transparent"
+              BorderThickness="0"
+              Command="{Binding GoBackCommand}"
+              MinHeight="44"
+              MinWidth="44">
+
+        <Button.Styles>
+          <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+          </Style>
+          <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+          </Style>
+        </Button.Styles>
+
+        <Path Data="M15,4 L7,12 L15,20"
+              HorizontalAlignment="Center"
+              Stroke="{DynamicResource SecondaryTextBrush}"
+              StrokeLineCap="Round"
+              StrokeJoin="Round"
+              StrokeThickness="2"
+              VerticalAlignment="Center"/>
+      </Button>
+      <TextBlock FontSize="18"
+                 FontWeight="SemiBold"
+                 Foreground="{DynamicResource TitleForegroundBrush}"
+                 Text="课表列表"
+                 VerticalAlignment="Center"/>
+    </StackPanel>
+
+    <ScrollViewer Grid.Row="1">
+      <StackPanel Margin="16,0,16,16" Spacing="12">
+
+        <!-- 行列表: 点名称区切换当前课表, 右侧按钮改名或删除 -->
+        <ItemsControl ItemsSource="{Binding Items}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <StackPanel Spacing="8"/>
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="models:TimetableListItem">
+              <Border Background="{DynamicResource CardBackgroundBrush}"
+                      CornerRadius="{StaticResource CardCornerRadius}"
+                      Padding="{StaticResource CardPadding}">
+
+                <Grid ColumnDefinitions="*,Auto">
+
+                  <!-- 常态: 名称 + 学期信息, 点这里切换当前课表 -->
+                  <StackPanel Grid.Column="0"
+                              IsVisible="{Binding !IsRenaming}"
+                              Spacing="2"
+                              Tapped="OnRowTapped"
+                              VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                      <TextBlock FontSize="15"
+                                 Text="{Binding Name}"
+                                 TextWrapping="Wrap"
+                                 VerticalAlignment="Center"/>
+                      <Border Background="{DynamicResource PrimaryButtonBackgroundBrush}"
+                              CornerRadius="9"
+                              IsVisible="{Binding IsCurrent}"
+                              Padding="8,1"
+                              VerticalAlignment="Center">
+                        <TextBlock FontSize="11"
+                                   Foreground="{DynamicResource PrimaryButtonForegroundBrush}"
+                                   Text="当前"/>
+                      </Border>
+                    </StackPanel>
+                    <TextBlock FontSize="12"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               Text="{Binding RangeText}"/>
+                  </StackPanel>
+
+                  <!-- 重命名态: 就地编辑名称 -->
+                  <TextBox Grid.Column="0"
+                           IsVisible="{Binding IsRenaming}"
+                           PlaceholderText="课表名称"
+                           Text="{Binding EditingName}"
+                           VerticalAlignment="Center"/>
+
+                  <StackPanel Grid.Column="1"
+                              Orientation="Horizontal"
+                              Spacing="8"
+                              VerticalAlignment="Center">
+                    <Button Click="OnRenameClick"
+                            Content="重命名"
+                            IsVisible="{Binding !IsRenaming}"/>
+                    <Button Background="{DynamicResource DangerButtonBackgroundBrush}"
+                            Click="OnDeleteClick"
+                            Content="删除"
+                            Foreground="{DynamicResource DangerButtonForegroundBrush}"
+                            IsVisible="{Binding !IsRenaming}"/>
+                    <Button Click="OnCommitRenameClick"
+                            Content="确定"
+                            IsVisible="{Binding IsRenaming}"/>
+                    <Button Click="OnCancelRenameClick"
+                            Content="取消"
+                            IsVisible="{Binding IsRenaming}"/>
+                  </StackPanel>
+
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- 空态: 列表为空时显示提示 -->
+        <StackPanel HorizontalAlignment="Center"
+                    IsVisible="{Binding IsEmpty}"
+                    Margin="0,48,0,0"
+                    Spacing="12">
+          <TextBlock FontSize="15"
+                     HorizontalAlignment="Center"
+                     Text="还没有课表"/>
+          <TextBlock Foreground="{DynamicResource SecondaryTextBrush}"
+                     HorizontalAlignment="Center"
+                     Text="去设置页新建一个课表, 之后就能在这里切换"
+                     TextWrapping="Wrap"/>
+        </StackPanel>
+
+      </StackPanel>
+    </ScrollViewer>
+
+  </Grid>
+
+</UserControl>

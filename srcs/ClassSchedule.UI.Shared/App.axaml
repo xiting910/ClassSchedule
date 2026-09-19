@@ -26,6 +26,11 @@
           <SolidColorBrush x:Key="ConfirmMaskBrush" Color="#66000000"/>
           <SolidColorBrush x:Key="DangerButtonBackgroundBrush" Color="#FCE8E6"/>
           <SolidColorBrush x:Key="DangerButtonForegroundBrush" Color="#B3261E"/>
+          <SolidColorBrush x:Key="PageBackgroundBrush" Color="#F2F5FA"/>
+          <SolidColorBrush x:Key="PrimaryButtonBackgroundBrush" Color="#2E6FDB"/>
+          <SolidColorBrush x:Key="PrimaryButtonForegroundBrush" Color="#FFFFFF"/>
+          <SolidColorBrush x:Key="SecondaryTextBrush" Color="#6B7280"/>
+          <SolidColorBrush x:Key="TitleForegroundBrush" Color="#1E5FCC"/>
           <SolidColorBrush x:Key="ToastBackgroundBrush" Color="#E6E27508"/>
           <SolidColorBrush x:Key="ToastProgressBrush" Color="#8DD30C"/>
         </ResourceDictionary>
@@ -36,6 +41,11 @@
           <SolidColorBrush x:Key="ConfirmMaskBrush" Color="#66000000"/>
           <SolidColorBrush x:Key="DangerButtonBackgroundBrush" Color="#4A2222"/>
           <SolidColorBrush x:Key="DangerButtonForegroundBrush" Color="#FF8A80"/>
+          <SolidColorBrush x:Key="PageBackgroundBrush" Color="#1A1D24"/>
+          <SolidColorBrush x:Key="PrimaryButtonBackgroundBrush" Color="#4C8DF6"/>
+          <SolidColorBrush x:Key="PrimaryButtonForegroundBrush" Color="#FFFFFF"/>
+          <SolidColorBrush x:Key="SecondaryTextBrush" Color="#9AA3B2"/>
+          <SolidColorBrush x:Key="TitleForegroundBrush" Color="#7FB0FF"/>
           <SolidColorBrush x:Key="ToastBackgroundBrush" Color="#E6200E02"/>
           <SolidColorBrush x:Key="ToastProgressBrush" Color="#1B2C03"/>
         </ResourceDictionary>
