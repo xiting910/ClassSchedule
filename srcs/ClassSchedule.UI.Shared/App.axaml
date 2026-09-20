@@ -22,14 +22,22 @@
       <ResourceDictionary.ThemeDictionaries>
         <!-- 浅色主题 -->
         <ResourceDictionary x:Key="Light">
+          <SolidColorBrush x:Key="AccentButtonBackgroundBrush" Color="#E65100"/>
+          <SolidColorBrush x:Key="AccentButtonForegroundBrush" Color="#FFFFFF"/>
           <SolidColorBrush x:Key="CardBackgroundBrush" Color="#FFFFFF"/>
           <SolidColorBrush x:Key="ConfirmMaskBrush" Color="#66000000"/>
           <SolidColorBrush x:Key="DangerButtonBackgroundBrush" Color="#FCE8E6"/>
           <SolidColorBrush x:Key="DangerButtonForegroundBrush" Color="#B3261E"/>
+          <SolidColorBrush x:Key="InfoButtonBackgroundBrush" Color="#00838F"/>
+          <SolidColorBrush x:Key="InfoButtonForegroundBrush" Color="#FFFFFF"/>
           <SolidColorBrush x:Key="PageBackgroundBrush" Color="#F2F5FA"/>
           <SolidColorBrush x:Key="PrimaryButtonBackgroundBrush" Color="#2E6FDB"/>
           <SolidColorBrush x:Key="PrimaryButtonForegroundBrush" Color="#FFFFFF"/>
           <SolidColorBrush x:Key="SecondaryTextBrush" Color="#6B7280"/>
+          <SolidColorBrush x:Key="StateChipBackgroundBrush" Color="#5E35B1"/>
+          <SolidColorBrush x:Key="StateChipForegroundBrush" Color="#FFFFFF"/>
+          <SolidColorBrush x:Key="SuccessButtonBackgroundBrush" Color="#2E7D32"/>
+          <SolidColorBrush x:Key="SuccessButtonForegroundBrush" Color="#FFFFFF"/>
           <SolidColorBrush x:Key="TitleForegroundBrush" Color="#1E5FCC"/>
           <SolidColorBrush x:Key="ToastBackgroundBrush" Color="#E6E27508"/>
           <SolidColorBrush x:Key="ToastProgressBrush" Color="#8DD30C"/>
@@ -37,14 +45,22 @@
 
         <!-- 深色主题 -->
         <ResourceDictionary x:Key="Dark">
+          <SolidColorBrush x:Key="AccentButtonBackgroundBrush" Color="#F57C00"/>
+          <SolidColorBrush x:Key="AccentButtonForegroundBrush" Color="#1A1D24"/>
           <SolidColorBrush x:Key="CardBackgroundBrush" Color="#232733"/>
           <SolidColorBrush x:Key="ConfirmMaskBrush" Color="#66000000"/>
           <SolidColorBrush x:Key="DangerButtonBackgroundBrush" Color="#4A2222"/>
           <SolidColorBrush x:Key="DangerButtonForegroundBrush" Color="#FF8A80"/>
+          <SolidColorBrush x:Key="InfoButtonBackgroundBrush" Color="#80DEEA"/>
+          <SolidColorBrush x:Key="InfoButtonForegroundBrush" Color="#1A1D24"/>
           <SolidColorBrush x:Key="PageBackgroundBrush" Color="#1A1D24"/>
           <SolidColorBrush x:Key="PrimaryButtonBackgroundBrush" Color="#4C8DF6"/>
           <SolidColorBrush x:Key="PrimaryButtonForegroundBrush" Color="#FFFFFF"/>
           <SolidColorBrush x:Key="SecondaryTextBrush" Color="#9AA3B2"/>
+          <SolidColorBrush x:Key="StateChipBackgroundBrush" Color="#7E57C2"/>
+          <SolidColorBrush x:Key="StateChipForegroundBrush" Color="#1A1D24"/>
+          <SolidColorBrush x:Key="SuccessButtonBackgroundBrush" Color="#4CAF50"/>
+          <SolidColorBrush x:Key="SuccessButtonForegroundBrush" Color="#1A1D24"/>
           <SolidColorBrush x:Key="TitleForegroundBrush" Color="#7FB0FF"/>
           <SolidColorBrush x:Key="ToastBackgroundBrush" Color="#E6200E02"/>
           <SolidColorBrush x:Key="ToastProgressBrush" Color="#1B2C03"/>

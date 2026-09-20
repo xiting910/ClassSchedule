@@ -46,7 +46,7 @@ public sealed partial class ShellView : UserControl
     }
 
     /// <summary>
-    /// 点击遮罩等同于取消, 关闭确认对话框
+    /// 点击遮罩等同于取消, 关闭浮层
     /// </summary>
     /// <param name="sender">遮罩</param>
     /// <param name="e">指针事件参数</param>
@@ -54,7 +54,7 @@ public sealed partial class ShellView : UserControl
     {
         if (DataContext is ShellViewModel viewModel)
         {
-            viewModel.RequestCancelConfirm();
+            viewModel.OverlayHost.Close();
         }
     }
 

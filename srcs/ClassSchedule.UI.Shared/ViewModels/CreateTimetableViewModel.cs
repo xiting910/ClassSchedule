@@ -18,12 +18,14 @@ namespace ClassSchedule.UI.Shared.ViewModels;
 /// </summary>
 /// <param name="logger">日志记录器</param>
 /// <param name="repository">课程表仓储</param>
-/// <param name="shell">壳视图模型</param>
+/// <param name="navigationStack">导航栈</param>
+/// <param name="toast">全局提示视图模型</param>
 /// <param name="uiOptions">UI 配置</param>
 public sealed partial class CreateTimetableViewModel(
     ILogger<CreateTimetableViewModel> logger,
     ITimetableRepository repository,
-    ShellViewModel shell,
+    NavigationStack navigationStack,
+    ToastViewModel toast,
     UIOptions uiOptions
 ) : ObservableObject, IPageViewModel
 {
@@ -91,7 +93,7 @@ public sealed partial class CreateTimetableViewModel(
     {
         if (Periods.Count <= 1)
         {
-            shell.Toast.Show("至少要保留一节");
+            toast.Show("至少要保留一节");
             return;
         }
 
@@ -110,7 +112,7 @@ public sealed partial class CreateTimetableViewModel(
     {
         if (Periods.Count >= Timetable.MaxPeriodDefinitions)
         {
-            shell.Toast.Show($"节次数不能超过 {Timetable.MaxPeriodDefinitions}");
+            toast.Show($"节次数不能超过 {Timetable.MaxPeriodDefinitions}");
             return;
         }
 
@@ -145,19 +147,19 @@ public sealed partial class CreateTimetableViewModel(
         var name = Name.Trim();
         if (string.IsNullOrEmpty(name))
         {
-            shell.Toast.Show("课表名称不能为空白");
+            toast.Show("课表名称不能为空白");
             return;
         }
 
         if (FirstDay is not { } firstDay)
         {
-            shell.Toast.Show("请选择第一周的日期");
+            toast.Show("请选择第一周的日期");
             return;
         }
 
         if (TotalWeeks is not { } totalWeeks || totalWeeks < 1 || totalWeeks > Timetable.MaxTotalWeeks)
         {
-            shell.Toast.Show($"总周数必须在 1 到 {Timetable.MaxTotalWeeks} 之间");
+            toast.Show($"总周数必须在 1 到 {Timetable.MaxTotalWeeks} 之间");
             return;
         }
 
@@ -166,13 +168,13 @@ public sealed partial class CreateTimetableViewModel(
         {
             if (row.StartTime is not { } startTime || row.EndTime is not { } endTime)
             {
-                shell.Toast.Show($"第 {row.Ordinal} 节的时间未填完整");
+                toast.Show($"第 {row.Ordinal} 节的时间未填完整");
                 return;
             }
 
             if (endTime <= startTime)
             {
-                shell.Toast.Show($"第 {row.Ordinal} 节的结束时间必须晚于开始时间");
+                toast.Show($"第 {row.Ordinal} 节的结束时间必须晚于开始时间");
                 return;
             }
 
@@ -184,7 +186,7 @@ public sealed partial class CreateTimetableViewModel(
         {
             if (startTime < lastEndTime)
             {
-                shell.Toast.Show($"第 {ordinal} 节与其他节次的时间重叠");
+                toast.Show($"第 {ordinal} 节与其他节次的时间重叠");
                 return;
             }
 
@@ -196,7 +198,7 @@ public sealed partial class CreateTimetableViewModel(
             var createResult = Timetable.Create(name, DateOnly.FromDateTime(firstDay.DateTime), totalWeeks);
             if (createResult is FailureResult createFailure)
             {
-                shell.Toast.Show(createFailure.Message);
+                toast.Show(createFailure.Message);
                 return;
             }
 
@@ -207,20 +209,20 @@ public sealed partial class CreateTimetableViewModel(
 
             if (addPeriodsResult is FailureResult addPeriodsFailure)
             {
-                shell.Toast.Show(addPeriodsFailure.Message);
+                toast.Show(addPeriodsFailure.Message);
                 return;
             }
 
             await repository.AddAsync(timetable);
             uiOptions.CurrentTimetableId ??= timetable.Id;
 
-            _ = shell.TryGoBack();
-            shell.Toast.Show($"已创建课表「{timetable.Name}」, 共 {timetable.TotalWeeks} 周");
+            _ = navigationStack.TryPop();
+            toast.Show($"已创建课表「{timetable.Name}」, 共 {timetable.TotalWeeks} 周");
             LogCreated(timetable.Id, timetable.Name, timetable.TotalWeeks, periods.Count);
         }
         catch (Exception ex)
         {
-            shell.Toast.Show($"新建课表失败: {ex.Message}");
+            toast.Show($"新建课表失败: {ex.Message}");
             LogCreateException(ex);
         }
     }
@@ -231,7 +233,7 @@ public sealed partial class CreateTimetableViewModel(
     [RelayCommand]
     private void Cancel()
     {
-        _ = shell.TryGoBack();
+        _ = navigationStack.TryPop();
     }
 
     /// <summary>

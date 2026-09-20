@@ -20,11 +20,11 @@ public sealed partial class TimetableListView : UserControl
     }
 
     /// <summary>
-    /// 点击行名称区时把该课表设为当前课表
+    /// 点击名称区时把该课表设为当前课表
     /// </summary>
-    /// <param name="sender">行名称区</param>
+    /// <param name="sender">名称区</param>
     /// <param name="e">点击事件参数</param>
-    private void OnRowTapped(object? sender, TappedEventArgs e)
+    private void OnSelectTapped(object? sender, TappedEventArgs e)
     {
         if (sender is Control { DataContext: TimetableListItem item }
         && DataContext is TimetableListViewModel viewModel)

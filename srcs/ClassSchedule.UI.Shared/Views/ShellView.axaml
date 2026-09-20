@@ -1,7 +1,6 @@
 <UserControl x:Class="ClassSchedule.UI.Shared.Views.ShellView"
              xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:views="using:ClassSchedule.UI.Shared.Views"
              xmlns:vm="using:ClassSchedule.UI.Shared.ViewModels"
              x:DataType="vm:ShellViewModel"
              Loaded="OnLoaded"
@@ -11,14 +10,12 @@
 
     <!-- Tab 内容区: 三个占位页, 后续阶段各自替换成真正的页面 -->
     <TabControl SelectedIndex="{Binding SelectedTabIndex}" TabStripPlacement="Bottom">
-      <!-- 三个 Tab 等宽铺满底部, 默认的横向 StackPanel 只按内容宽度排布 -->
       <TabControl.ItemsPanel>
         <ItemsPanelTemplate>
           <UniformGrid Rows="1"/>
         </ItemsPanelTemplate>
       </TabControl.ItemsPanel>
 
-      <!-- TabItem 的 header 呈现在它自己的 HorizontalContentAlignment 上, 默认 Stretch 会让文字靠左 -->
       <TabControl.Styles>
         <Style Selector="TabItem">
           <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -47,12 +44,13 @@
     </TabControl>
 
     <!-- 导航栈覆盖层: 页面自带不透明背景, 这里不叠底色 -->
-    <ContentControl Content="{Binding CurrentPage}" IsVisible="{Binding HasPage}"/>
+    <ContentControl Content="{Binding NavigationStack.CurrentPage}"
+                    IsVisible="{Binding NavigationStack.HasPage}"/>
 
-    <!-- 共用遮罩: 必须盖在导航栈覆盖层之上, 点击等同于取消 -->
+    <!-- 共用遮罩: 盖在导航栈覆盖层之上, 点击取消浮层 -->
     <Border Background="{DynamicResource ConfirmMaskBrush}"
-            IsVisible="{Binding IsConfirmVisible}"
-            Opacity="{Binding ConfirmOpacity}"
+            IsVisible="{Binding OverlayHost.HasOverlay}"
+            Opacity="{Binding OverlayHost.MaskOpacity}"
             PointerPressed="OnMaskPressed">
       <Border.Transitions>
         <Transitions>
@@ -61,35 +59,11 @@
       </Border.Transitions>
     </Border>
 
-    <!-- 确认卡片: 从下方 16px 上浮并淡入, 内容由 ConfirmView 提供 -->
-    <Border Background="{DynamicResource CardBackgroundBrush}"
-            CornerRadius="{StaticResource CardCornerRadius}"
-            HorizontalAlignment="Center"
-            IsVisible="{Binding IsConfirmVisible}"
-            Opacity="{Binding ConfirmOpacity}"
-            Padding="{StaticResource CardPadding}"
-            VerticalAlignment="Center">
-      <Border.Transitions>
-        <Transitions>
-          <DoubleTransition Duration="0:0:0.2" Property="Opacity"/>
-        </Transitions>
-      </Border.Transitions>
-
-      <Border.RenderTransform>
-        <TranslateTransform Y="{Binding ConfirmOffsetY}">
-          <TranslateTransform.Transitions>
-            <Transitions>
-              <DoubleTransition Duration="0:0:0.2" Easing="CubicEaseOut" Property="Y"/>
-            </Transitions>
-          </TranslateTransform.Transitions>
-        </TranslateTransform>
-      </Border.RenderTransform>
-
-      <ContentControl Content="{Binding Confirm}"/>
-    </Border>
+    <!-- 浮层: 盖在遮罩之上 -->
+    <ContentControl Content="{Binding OverlayHost.Current}" IsVisible="{Binding OverlayHost.HasOverlay}"/>
 
     <!-- 全局提示: 永远最上层 -->
-    <views:ToastView DataContext="{Binding Toast}"/>
+    <ContentControl Content="{Binding Toast}"/>
 
   </Panel>
 

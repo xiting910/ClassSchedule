@@ -29,6 +29,8 @@ public sealed class CreateTimetableViewModelTests
             .AddLogging()
             .AddSingleton<IConfiguration>(new ConfigurationBuilder().Build())
             .AddSingleton<UIOptions>()
+            .AddSingleton<NavigationStack>()
+            .AddSingleton<OverlayHostViewModel>()
             .AddSingleton<ShellViewModel>()
             .AddSingleton<ToastViewModel>()
             .AddSingleton(repository)
@@ -82,8 +84,8 @@ public sealed class CreateTimetableViewModelTests
             using var provider = CreateProvider(CreateRepository().Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
 
-            await shell.PushAsync<CreateTimetableViewModel>();
-            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<CreateTimetableViewModel>();
+            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.NavigationStack.CurrentPage);
 
             Assert.Equal(12, viewModel.Periods.Count);
             Assert.Equal(1, viewModel.Periods[0].Ordinal);
@@ -109,8 +111,8 @@ public sealed class CreateTimetableViewModelTests
         {
             using var provider = CreateProvider(CreateRepository().Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<CreateTimetableViewModel>();
-            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<CreateTimetableViewModel>();
+            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.NavigationStack.CurrentPage);
             viewModel.Periods[0].StartTime = new(9, 0);
 
             _ = await viewModel.LoadAsync();
@@ -134,8 +136,8 @@ public sealed class CreateTimetableViewModelTests
         {
             using var provider = CreateProvider(CreateRepository().Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<CreateTimetableViewModel>();
-            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<CreateTimetableViewModel>();
+            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.NavigationStack.CurrentPage);
             var removed = viewModel.Periods[1];
 
             viewModel.RemovePeriod(removed);
@@ -159,8 +161,8 @@ public sealed class CreateTimetableViewModelTests
         {
             using var provider = CreateProvider(CreateRepository().Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<CreateTimetableViewModel>();
-            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<CreateTimetableViewModel>();
+            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.NavigationStack.CurrentPage);
             while (viewModel.Periods.Count > 1)
             {
                 viewModel.RemovePeriod(viewModel.Periods[^1]);
@@ -186,8 +188,8 @@ public sealed class CreateTimetableViewModelTests
         {
             using var provider = CreateProvider(CreateRepository().Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<CreateTimetableViewModel>();
-            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<CreateTimetableViewModel>();
+            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.NavigationStack.CurrentPage);
 
             viewModel.AddPeriodCommand.Execute(null);
 
@@ -212,8 +214,8 @@ public sealed class CreateTimetableViewModelTests
         {
             using var provider = CreateProvider(CreateRepository().Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<CreateTimetableViewModel>();
-            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<CreateTimetableViewModel>();
+            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.NavigationStack.CurrentPage);
             viewModel.Periods[^1].EndTime = new(23, 50);
 
             viewModel.AddPeriodCommand.Execute(null);
@@ -236,8 +238,8 @@ public sealed class CreateTimetableViewModelTests
         {
             using var provider = CreateProvider(CreateRepository().Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<CreateTimetableViewModel>();
-            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<CreateTimetableViewModel>();
+            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.NavigationStack.CurrentPage);
             viewModel.Periods[^1].EndTime = new(23, 5);
 
             viewModel.AddPeriodCommand.Execute(null);
@@ -260,8 +262,8 @@ public sealed class CreateTimetableViewModelTests
         {
             using var provider = CreateProvider(CreateRepository().Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<CreateTimetableViewModel>();
-            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<CreateTimetableViewModel>();
+            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.NavigationStack.CurrentPage);
             viewModel.Periods[^1].EndTime = null;
 
             viewModel.AddPeriodCommand.Execute(null);
@@ -284,8 +286,8 @@ public sealed class CreateTimetableViewModelTests
         {
             using var provider = CreateProvider(CreateRepository().Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<CreateTimetableViewModel>();
-            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<CreateTimetableViewModel>();
+            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.NavigationStack.CurrentPage);
             while (viewModel.Periods.Count < Timetable.MaxPeriodDefinitions)
             {
                 viewModel.AddPeriodCommand.Execute(null);
@@ -315,8 +317,8 @@ public sealed class CreateTimetableViewModelTests
             var repository = CreateRepository();
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<CreateTimetableViewModel>();
-            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<CreateTimetableViewModel>();
+            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.NavigationStack.CurrentPage);
             FillValidForm(viewModel);
             viewModel.Name = "   ";
 
@@ -341,8 +343,8 @@ public sealed class CreateTimetableViewModelTests
             var repository = CreateRepository();
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<CreateTimetableViewModel>();
-            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<CreateTimetableViewModel>();
+            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.NavigationStack.CurrentPage);
             FillValidForm(viewModel);
             viewModel.FirstDay = null;
 
@@ -367,8 +369,8 @@ public sealed class CreateTimetableViewModelTests
             var repository = CreateRepository();
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<CreateTimetableViewModel>();
-            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<CreateTimetableViewModel>();
+            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.NavigationStack.CurrentPage);
             FillValidForm(viewModel);
             int?[] invalidTotalWeeks = [null, 0, Timetable.MaxTotalWeeks + 1];
 
@@ -401,8 +403,8 @@ public sealed class CreateTimetableViewModelTests
             var repository = CreateRepository();
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<CreateTimetableViewModel>();
-            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<CreateTimetableViewModel>();
+            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.NavigationStack.CurrentPage);
             FillValidForm(viewModel);
             viewModel.Periods[2].EndTime = null;
 
@@ -427,8 +429,8 @@ public sealed class CreateTimetableViewModelTests
             var repository = CreateRepository();
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<CreateTimetableViewModel>();
-            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<CreateTimetableViewModel>();
+            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.NavigationStack.CurrentPage);
             FillValidForm(viewModel);
             viewModel.Periods[0].EndTime = viewModel.Periods[0].StartTime;
 
@@ -453,8 +455,8 @@ public sealed class CreateTimetableViewModelTests
             var repository = CreateRepository();
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<CreateTimetableViewModel>();
-            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<CreateTimetableViewModel>();
+            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.NavigationStack.CurrentPage);
             FillValidForm(viewModel);
             viewModel.Periods[1].StartTime = new(8, 30);
 
@@ -483,8 +485,8 @@ public sealed class CreateTimetableViewModelTests
                 .Returns(Task.CompletedTask);
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<CreateTimetableViewModel>();
-            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<CreateTimetableViewModel>();
+            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.NavigationStack.CurrentPage);
             FillValidForm(viewModel);
             viewModel.Name = "  2026 秋季学期  ";
 
@@ -518,15 +520,15 @@ public sealed class CreateTimetableViewModelTests
             using var provider = CreateProvider(repository.Object);
             var uiOptions = provider.GetRequiredService<UIOptions>();
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<CreateTimetableViewModel>();
-            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<CreateTimetableViewModel>();
+            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.NavigationStack.CurrentPage);
             FillValidForm(viewModel);
 
             await viewModel.SubmitCommand.ExecuteAsync(null);
 
             var created = Assert.Single(createdTimetables);
             Assert.Equal(created.Id, uiOptions.CurrentTimetableId);
-            Assert.False(shell.HasPage);
+            Assert.False(shell.NavigationStack.HasPage);
 
             shell.Toast.Items.Clear();
             return 0;
@@ -547,8 +549,8 @@ public sealed class CreateTimetableViewModelTests
             var uiOptions = provider.GetRequiredService<UIOptions>();
             uiOptions.CurrentTimetableId = existingId;
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<CreateTimetableViewModel>();
-            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<CreateTimetableViewModel>();
+            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.NavigationStack.CurrentPage);
             FillValidForm(viewModel);
 
             await viewModel.SubmitCommand.ExecuteAsync(null);
@@ -573,15 +575,15 @@ public sealed class CreateTimetableViewModelTests
                 .Returns(Task.FromException(new InvalidOperationException(ExceptionMessage)));
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<CreateTimetableViewModel>();
-            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<CreateTimetableViewModel>();
+            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.NavigationStack.CurrentPage);
             FillValidForm(viewModel);
 
             await viewModel.SubmitCommand.ExecuteAsync(null);
 
             Assert.Equal($"新建课表失败: {ExceptionMessage}", Assert.Single(shell.Toast.Items).Message);
-            Assert.True(shell.HasPage);
-            Assert.Same(viewModel, shell.CurrentPage);
+            Assert.True(shell.NavigationStack.HasPage);
+            Assert.Same(viewModel, shell.NavigationStack.CurrentPage);
 
             shell.Toast.Items.Clear();
             return 0;
@@ -599,13 +601,13 @@ public sealed class CreateTimetableViewModelTests
             var repository = CreateRepository();
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<CreateTimetableViewModel>();
-            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<CreateTimetableViewModel>();
+            var viewModel = Assert.IsType<CreateTimetableViewModel>(shell.NavigationStack.CurrentPage);
 
             viewModel.CancelCommand.Execute(null);
 
-            Assert.False(shell.HasPage);
-            Assert.Null(shell.CurrentPage);
+            Assert.False(shell.NavigationStack.HasPage);
+            Assert.Null(shell.NavigationStack.CurrentPage);
             repository.Verify(x => x.AddAsync(It.IsAny<Timetable>(), It.IsAny<CancellationToken>()), Times.Never);
 
             return 0;

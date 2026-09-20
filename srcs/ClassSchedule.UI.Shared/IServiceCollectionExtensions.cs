@@ -22,6 +22,8 @@ public static class IServiceCollectionExtensions
         {
             return services
                 .AddSingleton<UIOptions>()
+                .AddSingleton<NavigationStack>()
+                .AddSingleton<OverlayHostViewModel>()
                 .AddSingleton<ShellViewModel>()
                 .AddSingleton<ToastViewModel>()
                 .AddScoped<TimetableListViewModel>()

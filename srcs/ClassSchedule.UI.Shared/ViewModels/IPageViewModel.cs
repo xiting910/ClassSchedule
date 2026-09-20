@@ -10,7 +10,7 @@ namespace ClassSchedule.UI.Shared.ViewModels;
 public interface IPageViewModel
 {
     /// <summary>
-    /// 异步加载页面数据, 由 <see cref="ShellViewModel"/> 在入栈前调用
+    /// 异步加载页面数据
     /// </summary>
     /// <returns>页面载入结果</returns>
     Task<Result> LoadAsync();
@@ -30,7 +30,7 @@ public interface IPageViewModel<TArg> : IPageViewModel
     }
 
     /// <summary>
-    /// 异步加载页面数据, 由 <see cref="ShellViewModel"/> 在入栈前调用
+    /// 异步加载页面数据
     /// </summary>
     /// <param name="arg">页面载入参数</param>
     /// <returns>页面载入结果</returns>

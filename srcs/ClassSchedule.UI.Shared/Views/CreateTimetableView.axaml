@@ -80,7 +80,8 @@
                               Grid.Row="0"
                               ClockIdentifier="24HourClock"
                               HorizontalAlignment="Stretch"
-                              SelectedTime="{Binding StartTime, Converter={StaticResource TimeOnlyConverter}}"/>
+                              SelectedTime="{Binding StartTime,
+                              Converter={StaticResource TimeOnlyConverter}}"/>
                   <TextBlock Grid.Column="1"
                              Grid.Row="1"
                              Foreground="{DynamicResource SecondaryTextBrush}"
@@ -90,7 +91,8 @@
                               Grid.Row="1"
                               ClockIdentifier="24HourClock"
                               HorizontalAlignment="Stretch"
-                              SelectedTime="{Binding EndTime, Converter={StaticResource TimeOnlyConverter}}"/>
+                              SelectedTime="{Binding EndTime,
+                              Converter={StaticResource TimeOnlyConverter}}"/>
                 </Grid>
               </DataTemplate>
             </ItemsControl.ItemTemplate>
@@ -106,8 +108,10 @@
     </ScrollViewer>
 
     <UniformGrid Grid.Row="2" ColumnSpacing="12" Margin="16" Rows="1">
-      <Button Command="{Binding CancelCommand}"
+      <Button Background="{DynamicResource AccentButtonBackgroundBrush}"
+              Command="{Binding CancelCommand}"
               Content="取消"
+              Foreground="{DynamicResource AccentButtonForegroundBrush}"
               HorizontalAlignment="Stretch"
               HorizontalContentAlignment="Center"/>
       <Button Background="{DynamicResource PrimaryButtonBackgroundBrush}"

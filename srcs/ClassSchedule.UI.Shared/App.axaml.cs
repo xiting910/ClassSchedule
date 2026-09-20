@@ -49,7 +49,6 @@ public sealed partial class App : Application
             ValidateOnBuild = true
         });
 
-        provider.GetRequiredService<IDatabaseInitializer>().Initialize();
         Services = provider;
         return provider;
     }
@@ -102,6 +101,9 @@ public sealed partial class App : Application
 
         // 初始化应用的核心壳视图
         services.GetRequiredService<IShellInitializer>().Initialize(ApplicationLifetime);
+
+        // 初始化数据库
+        services.GetRequiredService<IDatabaseInitializer>().Initialize();
 
         // 按首页决策打开启动页
         services.GetRequiredService<ShellViewModel>().OpenHomePage();

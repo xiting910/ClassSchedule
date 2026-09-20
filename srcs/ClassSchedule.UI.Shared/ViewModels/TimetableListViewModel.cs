@@ -16,12 +16,16 @@ namespace ClassSchedule.UI.Shared.ViewModels;
 /// </summary>
 /// <param name="logger">日志记录器</param>
 /// <param name="repository">课程表仓储</param>
-/// <param name="shell">壳视图模型</param>
+/// <param name="navigationStack">导航栈</param>
+/// <param name="overlayHost">浮层宿主视图模型</param>
+/// <param name="toast">全局提示视图模型</param>
 /// <param name="uiOptions">UI 配置</param>
 public sealed partial class TimetableListViewModel(
     ILogger<TimetableListViewModel> logger,
     ITimetableRepository repository,
-    ShellViewModel shell,
+    NavigationStack navigationStack,
+    OverlayHostViewModel overlayHost,
+    ToastViewModel toast,
     UIOptions uiOptions
 ) : ObservableObject, IPageViewModel
 {
@@ -60,7 +64,7 @@ public sealed partial class TimetableListViewModel(
     {
         uiOptions.CurrentTimetableId = item.Id;
         LogSelected(item.Id, item.Name);
-        _ = shell.TryGoBack();
+        _ = navigationStack.TryPop();
     }
 
     /// <summary>
@@ -72,7 +76,7 @@ public sealed partial class TimetableListViewModel(
         var name = item.EditingName.Trim();
         if (string.IsNullOrEmpty(name))
         {
-            shell.Toast.Show("课表名称不能为空白");
+            toast.Show("课表名称不能为空白");
             return;
         }
 
@@ -87,7 +91,7 @@ public sealed partial class TimetableListViewModel(
             var result = await repository.GetAsync(item.Id);
             if (result is FailureResult failure)
             {
-                shell.Toast.Show(failure.Message);
+                toast.Show(failure.Message);
                 return;
             }
 
@@ -101,7 +105,7 @@ public sealed partial class TimetableListViewModel(
         }
         catch (Exception ex)
         {
-            shell.Toast.Show($"重命名课表失败: {ex.Message}");
+            toast.Show($"重命名课表失败: {ex.Message}");
             LogRenameException(item.Id, ex);
         }
     }
@@ -112,11 +116,11 @@ public sealed partial class TimetableListViewModel(
     /// <param name="item">目标列表行</param>
     public void RequestDelete(TimetableListItem item)
     {
-        shell.RequestConfirm(
+        overlayHost.OpenConfirmOverlay(
             "删除课表",
             $"「{item.Name}」中的课程与片段会一并删除, 且无法恢复",
             "删除",
-            () => DeleteAsync(item)
+            () => Delete(item)
         );
     }
 
@@ -126,21 +130,21 @@ public sealed partial class TimetableListViewModel(
     [RelayCommand]
     private void GoBack()
     {
-        _ = shell.TryGoBack();
+        _ = navigationStack.TryPop();
     }
 
     /// <summary>
     /// 删除指定课表并就地刷新列表
     /// </summary>
     /// <param name="item">目标列表行</param>
-    private async Task DeleteAsync(TimetableListItem item)
+    private async void Delete(TimetableListItem item)
     {
         try
         {
             var result = await repository.DeleteAsync(item.Id);
             if (result is FailureResult failure)
             {
-                shell.Toast.Show(failure.Message);
+                toast.Show(failure.Message);
                 return;
             }
 
@@ -155,7 +159,7 @@ public sealed partial class TimetableListViewModel(
         }
         catch (Exception ex)
         {
-            shell.Toast.Show($"删除课表失败: {ex.Message}");
+            toast.Show($"删除课表失败: {ex.Message}");
             LogDeleteException(item.Id, ex);
         }
     }

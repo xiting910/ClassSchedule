@@ -40,6 +40,8 @@ public sealed class TimetableListViewModelTests
             .AddLogging()
             .AddSingleton<IConfiguration>(new ConfigurationBuilder().Build())
             .AddSingleton<UIOptions>()
+            .AddSingleton<NavigationStack>()
+            .AddSingleton<OverlayHostViewModel>()
             .AddSingleton<ShellViewModel>()
             .AddSingleton<ToastViewModel>()
             .AddSingleton(repository)
@@ -85,8 +87,8 @@ public sealed class TimetableListViewModelTests
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
 
-            await shell.PushAsync<TimetableListViewModel>();
-            var viewModel = Assert.IsType<TimetableListViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<TimetableListViewModel>();
+            var viewModel = Assert.IsType<TimetableListViewModel>(shell.NavigationStack.CurrentPage);
 
             Assert.Equal(2, viewModel.Items.Count);
             Assert.Equal("甲课表", viewModel.Items[0].Name);
@@ -110,8 +112,8 @@ public sealed class TimetableListViewModelTests
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
 
-            await shell.PushAsync<TimetableListViewModel>();
-            var viewModel = Assert.IsType<TimetableListViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<TimetableListViewModel>();
+            var viewModel = Assert.IsType<TimetableListViewModel>(shell.NavigationStack.CurrentPage);
 
             Assert.Empty(viewModel.Items);
             Assert.True(viewModel.IsEmpty);
@@ -138,8 +140,8 @@ public sealed class TimetableListViewModelTests
             uiOptions.CurrentTimetableId = current.Id;
             var shell = provider.GetRequiredService<ShellViewModel>();
 
-            await shell.PushAsync<TimetableListViewModel>();
-            var viewModel = Assert.IsType<TimetableListViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<TimetableListViewModel>();
+            var viewModel = Assert.IsType<TimetableListViewModel>(shell.NavigationStack.CurrentPage);
 
             Assert.True(viewModel.Items[0].IsCurrent);
             Assert.False(viewModel.Items[1].IsCurrent);
@@ -162,13 +164,13 @@ public sealed class TimetableListViewModelTests
             using var provider = CreateProvider(repository.Object);
             var uiOptions = provider.GetRequiredService<UIOptions>();
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<TimetableListViewModel>();
-            var viewModel = Assert.IsType<TimetableListViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<TimetableListViewModel>();
+            var viewModel = Assert.IsType<TimetableListViewModel>(shell.NavigationStack.CurrentPage);
 
             viewModel.Select(viewModel.Items[0]);
 
             Assert.Equal(viewModel.Items[0].Id, uiOptions.CurrentTimetableId);
-            Assert.False(shell.HasPage);
+            Assert.False(shell.NavigationStack.HasPage);
 
             return 0;
         }, TestContext.Current.CancellationToken);
@@ -187,8 +189,8 @@ public sealed class TimetableListViewModelTests
                 .ReturnsAsync([new(Guid.NewGuid(), "甲课表", SampleMonday, 18)]);
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<TimetableListViewModel>();
-            var viewModel = Assert.IsType<TimetableListViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<TimetableListViewModel>();
+            var viewModel = Assert.IsType<TimetableListViewModel>(shell.NavigationStack.CurrentPage);
             var item = viewModel.Items[0];
             item.EditingName = "   ";
             item.IsRenaming = true;
@@ -218,8 +220,8 @@ public sealed class TimetableListViewModelTests
                 .ReturnsAsync([new(Guid.NewGuid(), "甲课表", SampleMonday, 18)]);
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<TimetableListViewModel>();
-            var viewModel = Assert.IsType<TimetableListViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<TimetableListViewModel>();
+            var viewModel = Assert.IsType<TimetableListViewModel>(shell.NavigationStack.CurrentPage);
             var item = viewModel.Items[0];
             item.EditingName = item.Name;
             item.IsRenaming = true;
@@ -252,8 +254,8 @@ public sealed class TimetableListViewModelTests
                 .ReturnsAsync(Result.Success(timetable));
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<TimetableListViewModel>();
-            var viewModel = Assert.IsType<TimetableListViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<TimetableListViewModel>();
+            var viewModel = Assert.IsType<TimetableListViewModel>(shell.NavigationStack.CurrentPage);
             var item = viewModel.Items[0];
             item.EditingName = "  新名称  ";
             item.IsRenaming = true;
@@ -282,8 +284,8 @@ public sealed class TimetableListViewModelTests
                 .ReturnsAsync([new(Guid.NewGuid(), "甲课表", SampleMonday, 18)]);
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<TimetableListViewModel>();
-            var viewModel = Assert.IsType<TimetableListViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<TimetableListViewModel>();
+            var viewModel = Assert.IsType<TimetableListViewModel>(shell.NavigationStack.CurrentPage);
             var item = viewModel.Items[0];
             item.EditingName = "新名称";
             item.IsRenaming = true;
@@ -315,8 +317,8 @@ public sealed class TimetableListViewModelTests
                 .Returns(Task.FromException<Result>(new InvalidOperationException(ExceptionMessage)));
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<TimetableListViewModel>();
-            var viewModel = Assert.IsType<TimetableListViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<TimetableListViewModel>();
+            var viewModel = Assert.IsType<TimetableListViewModel>(shell.NavigationStack.CurrentPage);
             var item = viewModel.Items[0];
             item.EditingName = "新名称";
             item.IsRenaming = true;
@@ -345,12 +347,12 @@ public sealed class TimetableListViewModelTests
                 .ReturnsAsync([new(Guid.NewGuid(), "甲课表", SampleMonday, 18)]);
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<TimetableListViewModel>();
-            var viewModel = Assert.IsType<TimetableListViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<TimetableListViewModel>();
+            var viewModel = Assert.IsType<TimetableListViewModel>(shell.NavigationStack.CurrentPage);
 
             viewModel.RequestDelete(viewModel.Items[0]);
 
-            var confirm = Assert.IsType<ConfirmViewModel>(shell.Confirm);
+            var confirm = Assert.IsType<ConfirmViewModel>(shell.OverlayHost.Current);
             Assert.Equal("删除课表", confirm.Title);
             Assert.Equal("「甲课表」中的课程与片段会一并删除, 且无法恢复", confirm.Message);
             Assert.Equal("删除", confirm.ConfirmText);
@@ -371,13 +373,13 @@ public sealed class TimetableListViewModelTests
             var repository = CreateRepository();
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<TimetableListViewModel>();
-            var viewModel = Assert.IsType<TimetableListViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<TimetableListViewModel>();
+            var viewModel = Assert.IsType<TimetableListViewModel>(shell.NavigationStack.CurrentPage);
 
             viewModel.GoBackCommand.Execute(null);
 
-            Assert.False(shell.HasPage);
-            Assert.Null(shell.CurrentPage);
+            Assert.False(shell.NavigationStack.HasPage);
+            Assert.Null(shell.NavigationStack.CurrentPage);
 
             return 0;
         }, TestContext.Current.CancellationToken);
@@ -387,7 +389,7 @@ public sealed class TimetableListViewModelTests
     /// 验证确认之后删除该课表并就地移除列表行
     /// </summary>
     [Fact]
-    public async Task DeleteAsync_确认之后_删除该课表并移除列表行()
+    public async Task Delete_确认之后_删除该课表并移除列表行()
     {
         _ = await TestEnvironmentFixture.Session.Dispatch(async () =>
         {
@@ -398,13 +400,16 @@ public sealed class TimetableListViewModelTests
                 .ReturnsAsync([first, second]);
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<TimetableListViewModel>();
-            var viewModel = Assert.IsType<TimetableListViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<TimetableListViewModel>();
+            var viewModel = Assert.IsType<TimetableListViewModel>(shell.NavigationStack.CurrentPage);
             var item = viewModel.Items[0];
 
             viewModel.RequestDelete(item);
-            var confirm = Assert.IsType<ConfirmViewModel>(shell.Confirm);
-            await confirm.ConfirmCommand.ExecuteAsync(null);
+            var confirm = Assert.IsType<ConfirmViewModel>(shell.OverlayHost.Current);
+            confirm.ConfirmCommand.Execute(null);
+
+            Assert.False(shell.OverlayHost.HasOverlay);
+            Assert.Null(shell.OverlayHost.Current);
 
             _ = Assert.Single(viewModel.Items);
             Assert.Equal("乙课表", viewModel.Items[0].Name);
@@ -419,7 +424,7 @@ public sealed class TimetableListViewModelTests
     /// 验证删掉当前课表时把当前课表置空
     /// </summary>
     [Fact]
-    public async Task DeleteAsync_删除当前课表_清空当前课表ID()
+    public async Task Delete_删除当前课表_清空当前课表ID()
     {
         _ = await TestEnvironmentFixture.Session.Dispatch(async () =>
         {
@@ -432,12 +437,12 @@ public sealed class TimetableListViewModelTests
             var uiOptions = provider.GetRequiredService<UIOptions>();
             uiOptions.CurrentTimetableId = current.Id;
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<TimetableListViewModel>();
-            var viewModel = Assert.IsType<TimetableListViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<TimetableListViewModel>();
+            var viewModel = Assert.IsType<TimetableListViewModel>(shell.NavigationStack.CurrentPage);
 
             viewModel.RequestDelete(viewModel.Items[0]);
-            var confirm = Assert.IsType<ConfirmViewModel>(shell.Confirm);
-            await confirm.ConfirmCommand.ExecuteAsync(null);
+            var confirm = Assert.IsType<ConfirmViewModel>(shell.OverlayHost.Current);
+            confirm.ConfirmCommand.Execute(null);
 
             Assert.Null(uiOptions.CurrentTimetableId);
 
@@ -449,7 +454,7 @@ public sealed class TimetableListViewModelTests
     /// 验证删掉的不是当前课表时保留当前课表
     /// </summary>
     [Fact]
-    public async Task DeleteAsync_删除非当前课表_保留当前课表ID()
+    public async Task Delete_删除非当前课表_保留当前课表ID()
     {
         _ = await TestEnvironmentFixture.Session.Dispatch(async () =>
         {
@@ -462,12 +467,12 @@ public sealed class TimetableListViewModelTests
             var uiOptions = provider.GetRequiredService<UIOptions>();
             uiOptions.CurrentTimetableId = current.Id;
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<TimetableListViewModel>();
-            var viewModel = Assert.IsType<TimetableListViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<TimetableListViewModel>();
+            var viewModel = Assert.IsType<TimetableListViewModel>(shell.NavigationStack.CurrentPage);
 
             viewModel.RequestDelete(viewModel.Items[1]);
-            var confirm = Assert.IsType<ConfirmViewModel>(shell.Confirm);
-            await confirm.ConfirmCommand.ExecuteAsync(null);
+            var confirm = Assert.IsType<ConfirmViewModel>(shell.OverlayHost.Current);
+            confirm.ConfirmCommand.Execute(null);
 
             Assert.Equal(current.Id, uiOptions.CurrentTimetableId);
             _ = Assert.Single(viewModel.Items);
@@ -480,7 +485,7 @@ public sealed class TimetableListViewModelTests
     /// 验证仓储删除失败时弹出提示且不移除列表行
     /// </summary>
     [Fact]
-    public async Task DeleteAsync_仓储删除失败_弹出提示且不移除列表行()
+    public async Task Delete_仓储删除失败_弹出提示且不移除列表行()
     {
         _ = await TestEnvironmentFixture.Session.Dispatch(async () =>
         {
@@ -491,13 +496,13 @@ public sealed class TimetableListViewModelTests
                 .ReturnsAsync(Result.Failure(ErrorCode.TimetableNotFound, FailureMessage));
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<TimetableListViewModel>();
-            var viewModel = Assert.IsType<TimetableListViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<TimetableListViewModel>();
+            var viewModel = Assert.IsType<TimetableListViewModel>(shell.NavigationStack.CurrentPage);
             var item = viewModel.Items[0];
 
             viewModel.RequestDelete(item);
-            var confirm = Assert.IsType<ConfirmViewModel>(shell.Confirm);
-            await confirm.ConfirmCommand.ExecuteAsync(null);
+            var confirm = Assert.IsType<ConfirmViewModel>(shell.OverlayHost.Current);
+            confirm.ConfirmCommand.Execute(null);
 
             Assert.Equal(FailureMessage, Assert.Single(shell.Toast.Items).Message);
             Assert.Contains(item, viewModel.Items);
@@ -512,7 +517,7 @@ public sealed class TimetableListViewModelTests
     /// 验证仓储删除抛出异常时弹出提示且不移除列表行
     /// </summary>
     [Fact]
-    public async Task DeleteAsync_仓储抛异常_弹出提示且不移除列表行()
+    public async Task Delete_仓储抛异常_弹出提示且不移除列表行()
     {
         _ = await TestEnvironmentFixture.Session.Dispatch(async () =>
         {
@@ -523,13 +528,13 @@ public sealed class TimetableListViewModelTests
                 .Returns(Task.FromException<Result>(new InvalidOperationException(ExceptionMessage)));
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<TimetableListViewModel>();
-            var viewModel = Assert.IsType<TimetableListViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<TimetableListViewModel>();
+            var viewModel = Assert.IsType<TimetableListViewModel>(shell.NavigationStack.CurrentPage);
             var item = viewModel.Items[0];
 
             viewModel.RequestDelete(item);
-            var confirm = Assert.IsType<ConfirmViewModel>(shell.Confirm);
-            await confirm.ConfirmCommand.ExecuteAsync(null);
+            var confirm = Assert.IsType<ConfirmViewModel>(shell.OverlayHost.Current);
+            confirm.ConfirmCommand.Execute(null);
 
             Assert.Equal($"删除课表失败: {ExceptionMessage}", Assert.Single(shell.Toast.Items).Message);
             Assert.Contains(item, viewModel.Items);
@@ -543,7 +548,7 @@ public sealed class TimetableListViewModelTests
     /// 验证删掉最后一张课表后显示空态
     /// </summary>
     [Fact]
-    public async Task DeleteAsync_删掉最后一张课表_显示空态()
+    public async Task Delete_删掉最后一张课表_显示空态()
     {
         _ = await TestEnvironmentFixture.Session.Dispatch(async () =>
         {
@@ -552,12 +557,15 @@ public sealed class TimetableListViewModelTests
                 .ReturnsAsync([new(Guid.NewGuid(), "甲课表", SampleMonday, 18)]);
             using var provider = CreateProvider(repository.Object);
             var shell = provider.GetRequiredService<ShellViewModel>();
-            await shell.PushAsync<TimetableListViewModel>();
-            var viewModel = Assert.IsType<TimetableListViewModel>(shell.CurrentPage);
+            await shell.NavigationStack.PushAsync<TimetableListViewModel>();
+            var viewModel = Assert.IsType<TimetableListViewModel>(shell.NavigationStack.CurrentPage);
 
             viewModel.RequestDelete(viewModel.Items[0]);
-            var confirm = Assert.IsType<ConfirmViewModel>(shell.Confirm);
-            await confirm.ConfirmCommand.ExecuteAsync(null);
+            var confirm = Assert.IsType<ConfirmViewModel>(shell.OverlayHost.Current);
+            confirm.ConfirmCommand.Execute(null);
+
+            Assert.False(shell.OverlayHost.HasOverlay);
+            Assert.Null(shell.OverlayHost.Current);
 
             Assert.Empty(viewModel.Items);
             Assert.True(viewModel.IsEmpty);

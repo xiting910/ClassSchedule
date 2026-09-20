@@ -59,24 +59,25 @@
 
                 <Grid ColumnDefinitions="*,Auto">
 
-                  <!-- 常态: 名称 + 学期信息, 点这里切换当前课表 -->
+                  <!-- 常态: 这块区域铺满按钮左侧, 点它切换当前课表 -->
                   <StackPanel Grid.Column="0"
+                              Background="Transparent"
                               IsVisible="{Binding !IsRenaming}"
                               Spacing="2"
-                              Tapped="OnRowTapped"
+                              Tapped="OnSelectTapped"
                               VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                       <TextBlock FontSize="15"
                                  Text="{Binding Name}"
                                  TextWrapping="Wrap"
                                  VerticalAlignment="Center"/>
-                      <Border Background="{DynamicResource PrimaryButtonBackgroundBrush}"
+                      <Border Background="{DynamicResource StateChipBackgroundBrush}"
                               CornerRadius="9"
                               IsVisible="{Binding IsCurrent}"
                               Padding="8,1"
                               VerticalAlignment="Center">
                         <TextBlock FontSize="11"
-                                   Foreground="{DynamicResource PrimaryButtonForegroundBrush}"
+                                   Foreground="{DynamicResource StateChipForegroundBrush}"
                                    Text="当前"/>
                       </Border>
                     </StackPanel>
@@ -92,23 +93,31 @@
                            Text="{Binding EditingName}"
                            VerticalAlignment="Center"/>
 
+                  <!-- Margin 是给输入框留的间隔, 否则 TextBox 会贴着「确定」 -->
                   <StackPanel Grid.Column="1"
+                              Margin="12,0,0,0"
                               Orientation="Horizontal"
                               Spacing="8"
                               VerticalAlignment="Center">
-                    <Button Click="OnRenameClick"
+                    <Button Background="{DynamicResource InfoButtonBackgroundBrush}"
+                            Click="OnRenameClick"
                             Content="重命名"
+                            Foreground="{DynamicResource InfoButtonForegroundBrush}"
                             IsVisible="{Binding !IsRenaming}"/>
                     <Button Background="{DynamicResource DangerButtonBackgroundBrush}"
                             Click="OnDeleteClick"
                             Content="删除"
                             Foreground="{DynamicResource DangerButtonForegroundBrush}"
                             IsVisible="{Binding !IsRenaming}"/>
-                    <Button Click="OnCommitRenameClick"
+                    <Button Background="{DynamicResource SuccessButtonBackgroundBrush}"
+                            Click="OnCommitRenameClick"
                             Content="确定"
+                            Foreground="{DynamicResource SuccessButtonForegroundBrush}"
                             IsVisible="{Binding IsRenaming}"/>
-                    <Button Click="OnCancelRenameClick"
+                    <Button Background="{DynamicResource AccentButtonBackgroundBrush}"
+                            Click="OnCancelRenameClick"
                             Content="取消"
+                            Foreground="{DynamicResource AccentButtonForegroundBrush}"
                             IsVisible="{Binding IsRenaming}"/>
                   </StackPanel>
 
