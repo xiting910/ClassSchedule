@@ -53,8 +53,8 @@ public sealed class ConfirmViewModelTests
                 Title,
                 Message,
                 ConfirmText,
-                () => calls.Add("closing"),
-                () => calls.Add("confirm")
+                () => calls.Add("confirm"),
+                () => calls.Add("closing")
             );
 
             viewModel.ConfirmCommand.Execute(null);
@@ -79,8 +79,8 @@ public sealed class ConfirmViewModelTests
                 Title,
                 Message,
                 ConfirmText,
-                () => closed = true,
-                () => confirmed = true
+                () => confirmed = true,
+                () => closed = true
             );
 
             viewModel.CancelCommand.Execute(null);

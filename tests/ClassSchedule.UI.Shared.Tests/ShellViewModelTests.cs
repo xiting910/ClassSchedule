@@ -77,9 +77,9 @@ public sealed class ShellViewModelTests
             var first = Assert.IsType<FakePageViewModel>(shell.NavigationStack.CurrentPage);
             await shell.NavigationStack.PushAsync<FakePageViewModel>();
             var second = Assert.IsType<FakePageViewModel>(shell.NavigationStack.CurrentPage);
-            shell.OverlayHost.OpenConfirmOverlay(
-                "删除片段", "删除后无法恢复", "删除", () => { }
-            );
+            shell.OverlayHost.Open(new ConfirmViewModel(
+                "删除片段", "删除后无法恢复", "删除", () => { }, shell.OverlayHost.Close
+            ));
             shell.SelectedTabIndex = 2;
 
             // 浮层在最上层, 只关它, 页面与 Tab 都不动

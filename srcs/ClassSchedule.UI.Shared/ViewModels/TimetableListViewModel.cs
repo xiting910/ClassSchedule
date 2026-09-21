@@ -122,12 +122,13 @@ public sealed partial class TimetableListViewModel(
     /// <param name="item">目标列表行</param>
     public void RequestDelete(TimetableListItem item)
     {
-        overlayHost.OpenConfirmOverlay(
+        overlayHost.Open(new ConfirmViewModel(
             "删除课表",
             $"「{item.Name}」中的课程与片段会一并删除, 且无法恢复",
             "删除",
-            () => Delete(item)
-        );
+            () => Delete(item),
+            overlayHost.Close
+        ));
     }
 
     /// <summary>

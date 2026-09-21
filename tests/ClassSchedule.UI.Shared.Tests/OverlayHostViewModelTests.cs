@@ -24,16 +24,27 @@ public sealed class OverlayHostViewModelTests
     private const string ConfirmText = "删除";
 
     /// <summary>
-    /// 验证打开确认对话框时创建视图模型, 并让遮罩进入补间起点
+    /// 创建一个确认对话框并在宿主上打开
+    /// </summary>
+    /// <param name="host">浮层宿主</param>
+    /// <param name="title">标题</param>
+    /// <param name="onConfirm">确认回调</param>
+    private static void OpenConfirm(OverlayHostViewModel host, string title = Title, Action? onConfirm = null)
+    {
+        host.Open(new ConfirmViewModel(title, Message, ConfirmText, onConfirm ?? (() => { }), host.Close));
+    }
+
+    /// <summary>
+    /// 验证打开浮层时创建视图模型, 并让遮罩进入补间起点
     /// </summary>
     [Fact]
-    public async Task OpenConfirmOverlay_无浮层_创建确认对话框并初始化状态()
+    public async Task Open_无浮层_创建浮层并初始化状态()
     {
         _ = await TestEnvironmentFixture.Session.Dispatch(() =>
         {
             var host = new OverlayHostViewModel();
 
-            host.OpenConfirmOverlay(Title, Message, ConfirmText, () => { });
+            OpenConfirm(host);
 
             var confirm = Assert.IsType<ConfirmViewModel>(host.Current);
             Assert.Equal(Title, confirm.Title);
@@ -47,16 +58,16 @@ public sealed class OverlayHostViewModelTests
     }
 
     /// <summary>
-    /// 验证卡片的补间终点在下一帧才写入, 出生即终值会吞掉入场动画, 所以不能同步写
+    /// 验证浮层的补间终点在下一帧才写入, 出生即终值会吞掉入场动画, 所以不能同步写
     /// </summary>
     [Fact]
-    public async Task OpenConfirmOverlay_延后一帧_把卡片属性置为补间终点()
+    public async Task Open_延后一帧_把浮层属性置为补间终点()
     {
         _ = await TestEnvironmentFixture.Session.Dispatch(async () =>
         {
             var host = new OverlayHostViewModel();
 
-            host.OpenConfirmOverlay(Title, Message, ConfirmText, () => { });
+            OpenConfirm(host);
             var confirm = Assert.IsType<ConfirmViewModel>(host.Current);
 
             // 排到 Post 之后, 等它执行完再断言
@@ -70,23 +81,46 @@ public sealed class OverlayHostViewModelTests
     }
 
     /// <summary>
-    /// 验证已有浮层时新的请求直接替换掉旧的确认对话框
+    /// 验证已有浮层时新的请求直接替换掉旧的浮层
     /// </summary>
     [Fact]
-    public async Task OpenConfirmOverlay_已有浮层_替换旧的确认对话框()
+    public async Task Open_已有浮层_替换旧的浮层()
     {
         _ = await TestEnvironmentFixture.Session.Dispatch(() =>
         {
             var host = new OverlayHostViewModel();
-            host.OpenConfirmOverlay(Title, Message, ConfirmText, () => { });
+            OpenConfirm(host);
             var opened = Assert.IsType<ConfirmViewModel>(host.Current);
 
-            host.OpenConfirmOverlay("删除课程", Message, ConfirmText, () => { });
+            OpenConfirm(host, "删除课程");
 
             var replaced = Assert.IsType<ConfirmViewModel>(host.Current);
             Assert.NotSame(opened, replaced);
             Assert.Equal("删除课程", replaced.Title);
             Assert.True(host.HasOverlay);
+
+            return 0;
+        }, TestContext.Current.CancellationToken);
+    }
+
+    /// <summary>
+    /// 验证关闭之后可以重新打开, 不会被上一次的状态挡住
+    /// </summary>
+    [Fact]
+    public async Task Open_关闭之后_可以重新打开()
+    {
+        _ = await TestEnvironmentFixture.Session.Dispatch(() =>
+        {
+            var host = new OverlayHostViewModel();
+            OpenConfirm(host);
+            host.Close();
+
+            OpenConfirm(host, "删除课程");
+
+            var confirm = Assert.IsType<ConfirmViewModel>(host.Current);
+            Assert.Equal("删除课程", confirm.Title);
+            Assert.True(host.HasOverlay);
+            Assert.Equal(Constants.MaxRatio, host.MaskOpacity);
 
             return 0;
         }, TestContext.Current.CancellationToken);
@@ -101,36 +135,13 @@ public sealed class OverlayHostViewModelTests
         _ = await TestEnvironmentFixture.Session.Dispatch(() =>
         {
             var host = new OverlayHostViewModel();
-            host.OpenConfirmOverlay(Title, Message, ConfirmText, () => { });
+            OpenConfirm(host);
 
             host.Close();
 
             Assert.Null(host.Current);
             Assert.False(host.HasOverlay);
             Assert.Equal(0, host.MaskOpacity);
-
-            return 0;
-        }, TestContext.Current.CancellationToken);
-    }
-
-    /// <summary>
-    /// 验证关闭之后可以重新打开, 不会被上一次的状态挡住
-    /// </summary>
-    [Fact]
-    public async Task OpenConfirmOverlay_关闭之后_可以重新打开()
-    {
-        _ = await TestEnvironmentFixture.Session.Dispatch(() =>
-        {
-            var host = new OverlayHostViewModel();
-            host.OpenConfirmOverlay(Title, Message, ConfirmText, () => { });
-            host.Close();
-
-            host.OpenConfirmOverlay("删除课程", Message, ConfirmText, () => { });
-
-            var confirm = Assert.IsType<ConfirmViewModel>(host.Current);
-            Assert.Equal("删除课程", confirm.Title);
-            Assert.True(host.HasOverlay);
-            Assert.Equal(Constants.MaxRatio, host.MaskOpacity);
 
             return 0;
         }, TestContext.Current.CancellationToken);

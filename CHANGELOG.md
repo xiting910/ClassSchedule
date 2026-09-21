@@ -57,6 +57,12 @@
 - 添加基础设施层持久化单元测试, 覆盖仓储增删改查、课程片段 JSON 列往返与实体物化拦截器
 - 支持 OrdinalRange 的 JSON 反序列化, 为周次集合的 JSON 列持久化做准备
 - 启用全局 TreatWarningsAsErrors, 所有编译器警告视为错误
+- 添加 OverlayViewModel 浮层基类视图模型, 承载入场动画属性与 OnOpen
+- 添加 WeekPickerViewModel 周次选择浮层视图模型
+- 添加 CourseBlockViewModel 课程块视图模型, 推导网格行列与跨行数
+- 添加 PeriodRow、WeekDayHeader 与 WeekNumberItem 显示模型
+- 添加浮层基类与周次选择浮层的单元测试
+- 添加课程块、节次行与星期表头的单元测试
 - 添加 WeekRange 周段模型与 Weekday 星期枚举领域模型, 周段支持包含与交集判断
 - 添加 OrdinalRange 序数闭区间模型, 支持包含与交集判断, 并支持区间列表排序、相邻合并与重叠判定的归一化
 - 添加 Result 结果类型层次结构, 由无值成功、带值成功与失败三个封闭子类型区分, 非法状态不可表示
@@ -91,6 +97,10 @@
 - 采用集中包管理 (CPM) 统一管理 NuGet 包版本
 
 ### Changed
+- 浮层宿主的 Current 收窄为 OverlayViewModel, 打开入口改为泛型 Open
+- 浮层入场动画改由浮层自身驱动, 宿主只在下一帧回调 OnOpen
+- ConfirmViewModel 改为继承 OverlayViewModel, 构造参数的确认回调前移
+- 浮层宿主与确认对话框的单元测试改用新的打开入口
 - 导航栈新增 Pop 公开弹栈入口与私有的出栈刷新实现, 页面命令改用 Pop, TryPop 保留供返回键判定
 - IPageViewModel 补充带默认实现的 RefreshAsync, 页面可以按需实现刷新逻辑
 - 导航栈与浮层宿主注册为容器单例, 入栈页改为注入它们

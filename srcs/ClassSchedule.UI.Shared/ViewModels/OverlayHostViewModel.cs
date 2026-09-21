@@ -1,6 +1,5 @@
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
 
 namespace ClassSchedule.UI.Shared.ViewModels;
 
@@ -13,7 +12,7 @@ public sealed partial class OverlayHostViewModel : ObservableObject
     /// 当前浮层视图模型
     /// </summary>
     [ObservableProperty]
-    public partial ObservableObject? Current { get; set; }
+    public partial OverlayViewModel? Current { get; set; }
 
     /// <summary>
     /// 当前是否存在浮层
@@ -28,26 +27,18 @@ public sealed partial class OverlayHostViewModel : ObservableObject
     public partial double MaskOpacity { get; set; }
 
     /// <summary>
-    /// 打开确认对话框浮层
+    /// 打开浮层
     /// </summary>
-    /// <param name="title">标题</param>
-    /// <param name="message">说明文本</param>
-    /// <param name="confirmText">确认按钮的文案</param>
-    /// <param name="onConfirm">确认回调</param>
-    public void OpenConfirmOverlay(string title, string message, string confirmText, Action onConfirm)
+    /// <typeparam name="TOverlayViewModel">浮层视图模型类型</typeparam>
+    /// <param name="overlay">浮层视图模型</param>
+    public void Open<TOverlayViewModel>(TOverlayViewModel overlay) where TOverlayViewModel : OverlayViewModel
     {
-        var confirm = new ConfirmViewModel(title, message, confirmText, Close, onConfirm);
-
-        Current = confirm;
+        Current = overlay;
         HasOverlay = true;
         MaskOpacity = Constants.MaxRatio;
 
-        // 此时 ConfirmViewModel 还未绑定到视图, 需要在 UI 线程上延迟设置动画属性
-        Dispatcher.UIThread.Post(() =>
-        {
-            confirm.Opacity = Constants.MaxRatio;
-            confirm.OffsetY = 0;
-        });
+        // 浮层的入场动画需要在下一帧才执行, 否则会被同步写入的终值吞掉
+        Dispatcher.UIThread.Post(overlay.OnOpen);
     }
 
     /// <summary>
