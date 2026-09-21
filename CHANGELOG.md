@@ -149,6 +149,7 @@
 - 移除 WeekRangeTests 单元测试类, 由 OrdinalRangeTests 覆盖序数闭区间及其归一化
 - 移除 Fragment.EnsureWeeksSorted, 周次集合改由 JSON 列持久化, 不再存在子表查询后的乱序场景
 - 移除 Toast 悬停暂停倒计时, 为安卓端适配, 一并移除 IsPaused 属性、指针进出事件处理器及其单元测试
+- 移除 Avalonia.Controls.DataGrid 包引用, 一并移除其在集中包管理中的版本定义与 App.axaml 中的 Fluent 样式引用
 
 ### Fixed
 - 修复文件日志丢失异常信息的问题, 异常文本现在会写入日志行
