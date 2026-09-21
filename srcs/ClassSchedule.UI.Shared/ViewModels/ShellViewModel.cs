@@ -87,13 +87,4 @@ public sealed partial class ShellViewModel(
     {
         return NavigationStack.PushAsync<TimetableListViewModel>();
     }
-
-    /// <summary>
-    /// 打开新建课表页
-    /// </summary>
-    [RelayCommand]
-    private Task OpenCreateTimetableAsync()
-    {
-        return NavigationStack.PushAsync<CreateTimetableViewModel>();
-    }
 }

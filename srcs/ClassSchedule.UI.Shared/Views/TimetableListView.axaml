@@ -7,8 +7,10 @@
 
   <Grid Background="{DynamicResource PageBackgroundBrush}" RowDefinitions="Auto,*">
 
-    <StackPanel Grid.Row="0" Margin="16" Orientation="Horizontal" Spacing="8">
-      <Button Background="Transparent"
+    <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" Margin="16">
+
+      <Button Grid.Column="0"
+              Background="Transparent"
               BorderThickness="0"
               Command="{Binding GoBackCommand}"
               MinHeight="44"
@@ -33,12 +35,21 @@
               StrokeThickness="2"
               VerticalAlignment="Center"/>
       </Button>
-      <TextBlock FontSize="18"
+
+      <TextBlock Grid.Column="1"
+                 FontSize="18"
                  FontWeight="SemiBold"
                  Foreground="{DynamicResource TitleForegroundBrush}"
                  Text="课表列表"
                  VerticalAlignment="Center"/>
-    </StackPanel>
+
+      <Button Grid.Column="2"
+              Background="{DynamicResource PrimaryButtonBackgroundBrush}"
+              Command="{Binding OpenCreateTimetableCommand}"
+              Content="新建课表"
+              Foreground="{DynamicResource PrimaryButtonForegroundBrush}"
+              VerticalAlignment="Center"/>
+    </Grid>
 
     <ScrollViewer Grid.Row="1">
       <StackPanel Margin="16,0,16,16" Spacing="12">
@@ -137,7 +148,7 @@
                      Text="还没有课表"/>
           <TextBlock Foreground="{DynamicResource SecondaryTextBrush}"
                      HorizontalAlignment="Center"
-                     Text="去设置页新建一个课表, 之后就能在这里切换"
+                     Text="点右上角的「新建课表」创建一个课表"
                      TextWrapping="Wrap"/>
         </StackPanel>
 

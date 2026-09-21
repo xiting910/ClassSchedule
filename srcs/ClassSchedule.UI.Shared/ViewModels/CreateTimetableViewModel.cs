@@ -216,7 +216,7 @@ public sealed partial class CreateTimetableViewModel(
             await repository.AddAsync(timetable);
             uiOptions.CurrentTimetableId ??= timetable.Id;
 
-            _ = navigationStack.TryPop();
+            navigationStack.Pop();
             toast.Show($"已创建课表「{timetable.Name}」, 共 {timetable.TotalWeeks} 周");
             LogCreated(timetable.Id, timetable.Name, timetable.TotalWeeks, periods.Count);
         }
@@ -233,7 +233,7 @@ public sealed partial class CreateTimetableViewModel(
     [RelayCommand]
     private void Cancel()
     {
-        _ = navigationStack.TryPop();
+        navigationStack.Pop();
     }
 
     /// <summary>

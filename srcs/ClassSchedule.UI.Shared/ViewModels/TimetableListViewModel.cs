@@ -43,6 +43,13 @@ public sealed partial class TimetableListViewModel(
     /// <inheritdoc/>
     public async Task<Result> LoadAsync()
     {
+        await RefreshAsync();
+        return Result.Success();
+    }
+
+    /// <inheritdoc/>
+    public async Task RefreshAsync()
+    {
         var summaries = await repository.ListAsync();
 
         Items.Clear();
@@ -53,7 +60,6 @@ public sealed partial class TimetableListViewModel(
 
         IsEmpty = Items.Count == 0;
         LogLoaded(Items.Count);
-        return Result.Success();
     }
 
     /// <summary>
@@ -64,7 +70,7 @@ public sealed partial class TimetableListViewModel(
     {
         uiOptions.CurrentTimetableId = item.Id;
         LogSelected(item.Id, item.Name);
-        _ = navigationStack.TryPop();
+        navigationStack.Pop();
     }
 
     /// <summary>
@@ -130,7 +136,16 @@ public sealed partial class TimetableListViewModel(
     [RelayCommand]
     private void GoBack()
     {
-        _ = navigationStack.TryPop();
+        navigationStack.Pop();
+    }
+
+    /// <summary>
+    /// 打开新建课表页
+    /// </summary>
+    [RelayCommand]
+    private Task OpenCreateTimetableAsync()
+    {
+        return navigationStack.PushAsync<CreateTimetableViewModel>();
     }
 
     /// <summary>

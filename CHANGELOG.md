@@ -30,6 +30,10 @@
 - 添加 ConfirmViewModel 确认对话框视图模型, 确认回调完成后请求关闭
 - 添加 UI 资源 ConfirmMaskBrush、CardBackgroundBrush 与危险按钮的前景背景色
 - 添加确认对话框的单元测试, 覆盖回调执行、异常处理、关闭动画与返回键优先取消
+- 添加 NavigationStack.Pop 公开弹栈入口, 供页面命令在出栈时不关心结果, 栈空时不做任何事
+- 添加出栈刷新机制, 弹栈换页后刷新被露出来的那一页, 刷新失败时弹出提示并记录日志, 异常不再外传
+- 添加 TimetableListViewModel.RefreshAsync, 按仓储的最新结果重建列表行, 新建课表返回后即可看到新课表
+- 添加 RefreshAsync 重建列表与新建课表返回后刷新的单元测试, 测试用视图模型补充刷新次数与刷新异常两项开关
 - 添加应用壳导航栈, ShellViewModel 支持按页面视图模型类型入栈与出栈, 每个入栈页在独立的服务范围里解析, 出栈时释放
 - 添加 IPageViewModel 与 IPageViewModel<TArg> 页面视图模型接口, 由页面自行实现载入逻辑并返回结果
 - 添加物理返回键处理, 安卓端优先弹栈, 栈空时回退到课表 Tab, 两者都不满足则交还系统
@@ -87,12 +91,19 @@
 - 采用集中包管理 (CPM) 统一管理 NuGet 包版本
 
 ### Changed
+- 导航栈新增 Pop 公开弹栈入口与私有的出栈刷新实现, 页面命令改用 Pop, TryPop 保留供返回键判定
+- IPageViewModel 补充带默认实现的 RefreshAsync, 页面可以按需实现刷新逻辑
 - 导航栈与浮层宿主注册为容器单例, 入栈页改为注入它们
 - 壳视图模型瘦身为导航与返回的判定者
 - 浮层遮罩透明度由浮层宿主承载, 确认对话框卡片改用自带外观
 - 确认对话框卡片改为贴底居中, 入场动画随之移入
 - 已有浮层时不再忽略新的确认请求, 改为替换当前浮层
 - 确认与取消回调由 Func<Task> 改为同步的 Action
+- 新建课表的入口由设置 Tab 的临时按钮移到课表列表页标题栏右侧, 命令随之从 ShellViewModel 迁到 TimetableListViewModel
+- 课表列表页顶栏改为三列网格, 返回按钮与标题居左, 新建课表按钮居右
+- 课表列表页空态文案改为引导点击右上角的「新建课表」
+- ShellView 的设置 Tab 改为占位文本, 正式设置页留待后续阶段
+- 设置 Tab 上的临时新建课表入口随之移除, 一并删除 ShellViewModel.OpenCreateTimetableCommand
 - 应用启动时先建壳视图, 再应用数据库迁移, 最后打开启动页
 - 带载入参数的 PushAsync 参数顺序改为视图模型类型在前
 - 课表列表的名称区铺满按钮左侧以扩大点击区域
@@ -126,6 +137,7 @@
 
 ### Removed
 - 移除 ConfirmViewModel 的日志记录器与全局提示参数, 回调异常不再就地提示
+- 移除 ShellViewModel.OpenCreateTimetableAsync, 该命令由 TimetableListViewModel 承载
 - 移除壳视图模型的 HomePageException 日志与日志记录器参数
 - 移除 ConfirmViewModelTests 中随回调改为 Action 而失效的三个用例
 - 移除测试用视图模型 FakeViewModel, 由 FakePageViewModel 取代

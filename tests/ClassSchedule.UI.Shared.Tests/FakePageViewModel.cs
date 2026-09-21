@@ -19,6 +19,11 @@ public sealed class FakePageViewModel : IPageViewModel<Guid>, IDisposable
     public Exception? LoadException { get; set; }
 
     /// <summary>
+    /// 刷新时抛出的异常, 为 <see langword="null"/> 时不抛出
+    /// </summary>
+    public Exception? RefreshException { get; set; }
+
+    /// <summary>
     /// 最近一次带参数载入时收到的参数
     /// </summary>
     public Guid? LoadArgument { get; private set; }
@@ -27,6 +32,11 @@ public sealed class FakePageViewModel : IPageViewModel<Guid>, IDisposable
     /// 是否已被释放
     /// </summary>
     public bool IsDisposed { get; private set; }
+
+    /// <summary>
+    /// 刷新次数
+    /// </summary>
+    public int RefreshCount { get; private set; }
 
     /// <inheritdoc/>
     public Task<Result> LoadAsync()
@@ -39,6 +49,13 @@ public sealed class FakePageViewModel : IPageViewModel<Guid>, IDisposable
     {
         LoadArgument = arg;
         return LoadAsync();
+    }
+
+    /// <inheritdoc/>
+    public Task RefreshAsync()
+    {
+        RefreshCount++;
+        return RefreshException is null ? Task.CompletedTask : Task.FromException(RefreshException);
     }
 
     /// <inheritdoc/>

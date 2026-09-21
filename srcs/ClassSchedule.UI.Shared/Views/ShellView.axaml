@@ -35,11 +35,7 @@
       </TabItem>
 
       <TabItem Header="设置">
-        <!-- 临时入口 -->
-        <Button Command="{Binding OpenCreateTimetableCommand}"
-                Content="新建课表"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"/>
+        <TextBlock HorizontalAlignment="Center" Text="设置" VerticalAlignment="Center"/>
       </TabItem>
     </TabControl>
 

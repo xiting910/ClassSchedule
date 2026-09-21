@@ -68,6 +68,17 @@ public sealed partial class NavigationStack(
     }
 
     /// <summary>
+    /// 将一页从导航栈中弹出, 如果导航栈为空则不执行任何操作
+    /// </summary>
+    public async void Pop()
+    {
+        if (_navigationStack.Count > 0)
+        {
+            await PopAsync();
+        }
+    }
+
+    /// <summary>
     /// 尝试将一页从导航栈中弹出
     /// </summary>
     /// <returns><see langword="true"/> 如果成功弹出一页, 否则为 <see langword="false"/></returns>
@@ -75,13 +86,7 @@ public sealed partial class NavigationStack(
     {
         if (_navigationStack.Count == 0) { return false; }
 
-        var entry = _navigationStack.Pop();
-        var count = _navigationStack.Count;
-        HasPage = count > 0;
-        CurrentPage = HasPage ? _navigationStack.Peek().ViewModel : null;
-        entry.Scope.Dispose();
-
-        LogPopped(count);
+        _ = PopAsync();
         return true;
     }
 
@@ -126,6 +131,38 @@ public sealed partial class NavigationStack(
     }
 
     /// <summary>
+    /// 将一页从导航栈中弹出, 并刷新上一页的数据
+    /// </summary>
+    private async Task PopAsync()
+    {
+        var entry = _navigationStack.Pop();
+        HasPage = _navigationStack.Count > 0;
+
+        if (HasPage)
+        {
+            CurrentPage = _navigationStack.Peek().ViewModel;
+
+            try
+            {
+                await CurrentPage.RefreshAsync();
+            }
+            catch (Exception ex)
+            {
+                var viewModelName = CurrentPage.GetType().Name;
+                toast.Show($"刷新页面 {viewModelName} 失败: {ex.Message}");
+                LogRefreshException(viewModelName, ex);
+            }
+        }
+        else
+        {
+            CurrentPage = null;
+        }
+
+        entry.Scope.Dispose();
+        LogPopped(_navigationStack.Count);
+    }
+
+    /// <summary>
     /// 记录导航栈入栈失败的日志
     /// </summary>
     /// <param name="viewModelName">页面视图模型的类型名</param>
@@ -166,11 +203,24 @@ public sealed partial class NavigationStack(
     private partial void LogPushException(string viewModelName, Exception exception);
 
     /// <summary>
+    /// 记录页面刷新失败的日志
+    /// </summary>
+    /// <param name="viewModelName">页面视图模型的类型名</param>
+    /// <param name="exception">异常</param>
+    [LoggerMessage(
+        EventId = 4,
+        EventName = "RefreshException",
+        Level = LogLevel.Warning,
+        Message = "Exception occurred while refreshing page: {ViewModelName}"
+    )]
+    private partial void LogRefreshException(string viewModelName, Exception exception);
+
+    /// <summary>
     /// 记录页面出栈完成的日志
     /// </summary>
     /// <param name="depth">出栈后的栈深</param>
     [LoggerMessage(
-        EventId = 4,
+        EventId = 5,
         EventName = "Popped",
         Level = LogLevel.Debug,
         Message = "Popped page: Depth={Depth}"

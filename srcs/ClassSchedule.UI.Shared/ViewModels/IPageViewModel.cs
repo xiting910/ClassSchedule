@@ -14,6 +14,14 @@ public interface IPageViewModel
     /// </summary>
     /// <returns>页面载入结果</returns>
     Task<Result> LoadAsync();
+
+    /// <summary>
+    /// 刷新页面数据
+    /// </summary>
+    Task RefreshAsync()
+    {
+        return Task.CompletedTask;
+    }
 }
 
 /// <summary>

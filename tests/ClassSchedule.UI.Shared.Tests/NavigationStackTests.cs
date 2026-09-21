@@ -1,3 +1,4 @@
+using Avalonia.Threading;
 using ClassSchedule.Domain.Models;
 using ClassSchedule.UI.Shared.ViewModels;
 using Microsoft.Extensions.Configuration;
@@ -298,6 +299,63 @@ public sealed class NavigationStackTests
     }
 
     /// <summary>
+    /// 验证弹出页面时刷新被露出来的那一页
+    /// </summary>
+    [Fact]
+    public async Task TryPop_弹出页面_刷新被露出来的页面()
+    {
+        _ = await TestEnvironmentFixture.Session.Dispatch(async () =>
+        {
+            using var provider = CreateProvider(services => services.AddScoped<FakePageViewModel>());
+            var navigationStack = provider.GetRequiredService<NavigationStack>();
+
+            await navigationStack.PushAsync<FakePageViewModel>();
+            var first = Assert.IsType<FakePageViewModel>(navigationStack.CurrentPage);
+            Assert.Equal(0, first.RefreshCount);
+
+            await navigationStack.PushAsync<FakePageViewModel>();
+            Assert.True(navigationStack.TryPop());
+            await Dispatcher.UIThread.InvokeAsync(() => { });
+
+            Assert.Equal(1, first.RefreshCount);
+
+            return 0;
+        }, TestContext.Current.CancellationToken);
+    }
+
+    /// <summary>
+    /// 验证刷新抛出异常时弹出提示, 栈状态保持不变且异常不外传
+    /// </summary>
+    [Fact]
+    public async Task TryPop_刷新抛异常_弹出提示且栈状态不变()
+    {
+        _ = await TestEnvironmentFixture.Session.Dispatch(async () =>
+        {
+            using var provider = CreateProvider(services => services.AddScoped<FakePageViewModel>());
+            var navigationStack = provider.GetRequiredService<NavigationStack>();
+            var toast = provider.GetRequiredService<ToastViewModel>();
+
+            await navigationStack.PushAsync<FakePageViewModel>();
+            var first = Assert.IsType<FakePageViewModel>(navigationStack.CurrentPage);
+            first.RefreshException = new InvalidOperationException(ExceptionMessage);
+
+            await navigationStack.PushAsync<FakePageViewModel>();
+            Assert.True(navigationStack.TryPop());
+            await Dispatcher.UIThread.InvokeAsync(() => { });
+
+            Assert.True(navigationStack.HasPage);
+            Assert.Same(first, navigationStack.CurrentPage);
+            Assert.Equal(
+                $"刷新页面 {nameof(FakePageViewModel)} 失败: {ExceptionMessage}",
+                Assert.Single(toast.Items).Message
+            );
+
+            toast.Items.Clear();
+            return 0;
+        }, TestContext.Current.CancellationToken);
+    }
+
+    /// <summary>
     /// 验证弹出最后一页时清空当前页面并消费本次弹出
     /// </summary>
     [Fact]
@@ -315,6 +373,29 @@ public sealed class NavigationStackTests
             Assert.False(navigationStack.HasPage);
             Assert.Null(navigationStack.CurrentPage);
             Assert.True(page.IsDisposed);
+
+            return 0;
+        }, TestContext.Current.CancellationToken);
+    }
+
+    /// <summary>
+    /// 验证弹出最后一页时没有需要刷新的页面
+    /// </summary>
+    [Fact]
+    public async Task TryPop_弹出最后一页_不刷新任何页面()
+    {
+        _ = await TestEnvironmentFixture.Session.Dispatch(async () =>
+        {
+            using var provider = CreateProvider(services => services.AddScoped<FakePageViewModel>());
+            var navigationStack = provider.GetRequiredService<NavigationStack>();
+
+            await navigationStack.PushAsync<FakePageViewModel>();
+            var page = Assert.IsType<FakePageViewModel>(navigationStack.CurrentPage);
+
+            Assert.True(navigationStack.TryPop());
+            await Dispatcher.UIThread.InvokeAsync(() => { });
+
+            Assert.Equal(0, page.RefreshCount);
 
             return 0;
         }, TestContext.Current.CancellationToken);
