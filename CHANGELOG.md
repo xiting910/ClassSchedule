@@ -97,6 +97,8 @@
 - 采用集中包管理 (CPM) 统一管理 NuGet 包版本
 
 ### Changed
+- 升级 Avalonia 系列包 (Avalonia、Android、Desktop、Fonts.Inter、Headless 与 Themes.Fluent) 至 12.1.3
+- 升级 Xamarin.AndroidX.Core.SplashScreen 至 1.2.0.2
 - 浮层宿主的 Current 收窄为 OverlayViewModel, 打开入口改为泛型 Open
 - 浮层入场动画改由浮层自身驱动, 宿主只在下一帧回调 OnOpen
 - ConfirmViewModel 改为继承 OverlayViewModel, 构造参数的确认回调前移
