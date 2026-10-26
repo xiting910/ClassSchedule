@@ -2,8 +2,8 @@
 
   <ItemGroup>
     <!-- Entity Framework Core -->
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.13" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.13" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.14" />
 
     <!-- Microsoft.Extensions 系列 -->
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.14" />
