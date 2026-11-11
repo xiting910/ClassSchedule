@@ -4,10 +4,10 @@
 
 📚 基于 **Avalonia UI** 的跨平台课程表应用 — 桌面 + Android 双平台
 
-采用**分层架构**，使用 **.NET 10.0** 构建。
+采用**分层架构**，使用 **.NET 11.0** 构建。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![.NET 10.0](https://img.shields.io/badge/.NET-10.0-512BD4.svg)](https://dotnet.microsoft.com/)
+[![.NET 11.0](https://img.shields.io/badge/.NET-11.0-512BD4.svg)](https://dotnet.microsoft.com/)
 [![Avalonia 12](https://img.shields.io/badge/Avalonia-12-8B45C6.svg)](https://avaloniaui.net/)
 [![Release](https://img.shields.io/github/v/release/xiting910/ClassSchedule)](https://github.com/xiting910/ClassSchedule/releases)
 [![Downloads](https://img.shields.io/github/downloads/xiting910/ClassSchedule/total)](https://github.com/xiting910/ClassSchedule/releases)
@@ -44,7 +44,7 @@
 
 | 类别    | 技术                                                  |
 | ------- | ----------------------------------------------------- |
-| 运行时  | .NET 10 · C# 14                                       |
+| 运行时  | .NET 11 · C# 15                                       |
 | UI 框架 | Avalonia 12 · CommunityToolkit.Mvvm                   |
 | 架构    | 分层架构 (Domain / Infrastructure / UI) · MVVM        |
 | 测试    | xUnit v3 · Moq · Avalonia.Headless                    |

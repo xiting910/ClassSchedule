@@ -97,6 +97,10 @@
 - 采用集中包管理 (CPM) 统一管理 NuGet 包版本
 
 ### Changed
+- 迁移至 .NET 11, 目标框架改为 net11.0
+- 在 global.json 中固定 .NET SDK 11.0.100, CI 与发布流程同步改用 .NET 11
+- 升级 EF Core 与 Microsoft.Extensions 系列至 11.0.0
+- 升级 Avalonia 系列包至 12.1.6, 升级 xunit.v3 至 4.0.3
 - 升级 Avalonia 系列包 (Avalonia、Android、Desktop、Fonts.Inter、Headless 与 Themes.Fluent) 至 12.1.3
 - 升级 Xamarin.AndroidX.Core.SplashScreen 至 1.2.0.2
 - 浮层宿主的 Current 收窄为 OverlayViewModel, 打开入口改为泛型 Open
@@ -148,6 +152,8 @@
 - 依赖注入与日志包引用由桌面端、安卓端与 UI 共享层测试项目移入 UI 共享层, 由后者统一传递
 
 ### Removed
+- 移除 Microsoft.Extensions.DependencyInjection.Abstractions 与 Logging.Abstractions 包引用, .NET 11 框架已自带
+- 移除 .editorconfig 中重复的 tab_width 与未使用的命名风格定义
 - 移除 ConfirmViewModel 的日志记录器与全局提示参数, 回调异常不再就地提示
 - 移除 ShellViewModel.OpenCreateTimetableAsync, 该命令由 TimetableListViewModel 承载
 - 移除壳视图模型的 HomePageException 日志与日志记录器参数
