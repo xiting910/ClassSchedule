@@ -52,9 +52,16 @@ jobs:
       # 6. 运行所有单元测试并收集代码覆盖率
       - name: Run tests with coverage
         run: |
-          dotnet test --solution ClassSchedule.slnx --configuration Release --no-build --verbosity normal \
-            --report-xunit-trx --report-xunit-trx-filename test-results.trx \
-            --results-directory ./TestResults
+          for proj in \
+            tests/ClassSchedule.Domain.Tests/ClassSchedule.Domain.Tests.csproj \
+            tests/ClassSchedule.Infrastructure.Tests/ClassSchedule.Infrastructure.Tests.csproj \
+            tests/ClassSchedule.UI.Shared.Tests/ClassSchedule.UI.Shared.Tests.csproj
+          do
+            name=$(basename "$proj" .csproj)
+            dotnet test --project "$proj" --configuration Release --no-build --verbosity normal \
+              --report-xunit-trx --report-xunit-trx-filename "${name}.trx" \
+              --results-directory "./TestResults/${name}"
+          done
 
       # 7. 上传测试结果
       - name: Upload test results
