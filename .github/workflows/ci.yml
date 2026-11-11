@@ -47,7 +47,7 @@ jobs:
 
       # 5. 以 Release 模式编译整个解决方案
       - name: Build solution (Release)
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build --no-restore --configuration Release -p:PublishReadyToRun=false
 
       # 6. 运行所有单元测试并收集代码覆盖率
       - name: Run tests with coverage
